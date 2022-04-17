@@ -48,16 +48,17 @@ function colormap() {
 # ALIAS COMMANDS
 alias l="exa --icons --group-directories-first"
 alias ls="exa --icons --group-directories-first"
-alias ll="exa --icons --group-directories-first -l"
+alias ll="exa --icons --group-directories-first -la"
 alias g="goto"
 alias cats="pygmentize -g -O style=monokai"
 alias grep='grep --color'
+alias su='su -'
 
 alias cbp="code /home/xcad/obsidianvault/boilerplates"
 alias cpr="code /home/xcad/obsidianvault/projects"
 
 # find out which distribution we are running on
-LFILE="/etc/*-release"
+LFILE="/etc/os-release"
 MFILE="/System/Library/CoreServices/SystemVersion.plist"
 if [[ -f $LFILE ]]; then
   _distro=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')

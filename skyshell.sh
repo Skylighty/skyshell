@@ -83,7 +83,7 @@ case $choice in
         ./install
         cd $currloc
         # Update the path 
-        echo -e "export PATH=$PATH:$HOME/.cargo/bin:$HOME/.local/bin" >> $HOME/.zshrc
+        echo -e "\nexport PATH=$PATH:$HOME/.cargo/bin:$HOME/.local/bin" >> $HOME/.zshrc
 
         #Finish
         echo -e "${CYAN}All should be set up :)!${NC}"
