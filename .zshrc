@@ -51,6 +51,7 @@ alias ls="exa --icons --group-directories-first"
 alias ll="exa --icons --group-directories-first -la"
 alias g="goto"
 alias cats="pygmentize -g -O style=monokai"
+alias ports="ss -tulnap"
 alias grep='grep --color'
 alias su='su -'
 
