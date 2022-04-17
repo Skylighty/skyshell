@@ -44,6 +44,7 @@ case $choice in
         apt-get update -y
         apt-get upgrade -y
         echo "${GREEN} OK. Updates should be all set :). ${NC}"
+        ;;
     2)
         # Install FiraCode fonts
         apt-get install -y fonts-firacode
@@ -87,6 +88,7 @@ case $choice in
         #Finish
         echo -e "${CYAN}All should be set up :)!${NC}"
         echo -e "Now just use ${YELL}chsh${NC} command to change your shell!"
+        ;;
     3)
         apt-get update -y > /dev/null
         echo -e "Updated ${YELL} all ${NC}"
@@ -116,7 +118,7 @@ case $choice in
         echo -e "Installed ${YELL} mlocate ${NC}"
 
         echo -e "${GREEN} All necessary packets should be installed by now :).${NC}"
-
+        ;;
     *)  
         echo "${RED}Sorry, wrong input :/${NC}"
         ;;
