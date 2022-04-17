@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# !!!!!!! 
+# TODO
+# Fix .cargo PATH problem for new user 
+# --------------------------------------
+# Some things should be done with if depending on user 
+# installing things for users is not properly configured.
+
 #COLOR CODES
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -13,20 +20,24 @@ NC='\033[0m'
 echo "For whom do you want to install SkyShell?" 
 echo -e "1) ${RED}root${NC} - global"
 echo "2) new sudo user"
+echo -e "3) ${RED}QUIT${NC}!"
 read -p "Please input your choice: " whochoice
 case $whochoice in
     1)
         towho=root
-        #homedir=/root
+        homedir=/root
         echo "You'll find all added files in ${YELL}/root/${NC} directory."
         ;;
     2)
         read -p "Please input a name for your user: " nwuname
-        adduser --disable-password --gecos "" $nwuname > /dev/null
+        adduser --disabled-password --gecos "" $nwuname > /dev/null
         usermod -a -G sudo $nwuname > /dev/null
         towho=$nwuname
-        #homedir=/home/$nwuname
+        homedir=/home/$nwuname
         echo -e "New sudoer of name ${YELL} $nwuname ${NC} has been ${GREEN}created${NC}!"
+        ;;
+    3)
+        exit 0
         ;;
     *)
         echo "${RED}Sorry, wrong input :/${NC}"
@@ -34,10 +45,11 @@ case $whochoice in
 esac
 
 echo -e "Choose the operation you want to perform: "
-echo "1) Update & upgrade ${GREEN}(recommended first)${NC}"
+echo -e "1) Update & upgrade ${GREEN}(recommended first)${NC}"
 echo "2) Install SkyShell"
 echo "3) Install necessary shell shit :)"
 echo -e "4) Inject auto SSH-agent to ZSH shell ${RED}(requires ssh-keygen first)!${NC}"
+echo -e "5) ${RED}QUIT!${NC}"
 read -p "Pick your choice: " choice
 case $choice in
     1)
@@ -56,8 +68,8 @@ case $choice in
         echo -e "${GREEN}OK${NC}. Zsh installed."
 
         # Copy ZSH config to homedir
-        cp .zshrc $HOME/ > /dev/null
-        echo -e "${GREEN}OK${NC}. Zsh basic cfg copied to $HOME/.zshrc"
+        cp .zshrc $homedir/ > /dev/null
+        echo -e "${GREEN}OK${NC}. Zsh basic cfg copied to $homedir/.zshrc"
         
         # Get Cargo meant for exa - ls
         apt-get install -y cargo > /dev/null
@@ -70,63 +82,62 @@ case $choice in
         # Get autosuggestions and add it's source to zsh configfile
         git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions > /dev/null
         echo -e "${GREEN}OK${NC}. Cloned auto-suggestions, injecting source to .zshrc!"
-        echo -e "source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $HOME/.zshrc > /dev/null 
+        echo -e "source $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc > /dev/null 
         
         # Install starship
         echp -e "${RED}! WARNING !${NC} You have to confirm prompt here! [y] "
         curl -sS https://starship.rs/install.sh | sh
         # inject starship config 
-        mkdir $HOME/.config
-        cp starship.toml $HOME/.config/
-        echo -e "${GREEN}OK${NC}. Starship installed, config at $HOME/.config/starship.toml"
+        mkdir $homedir/.config
+        cp starship.toml $homedir/.config/
+        echo -e "${GREEN}OK${NC}. Starship installed, config at $homedir/.config/starship.toml"
 
         # Install goto
-        git clone https://github.com/iridakos/goto.git $HOME/goto
+        git clone https://github.com/iridakos/goto.git $homedir/goto
         currloc=$PWD
-        cd $HOME/goto
+        cd $homedir/goto
         ./install
         cd $currloc
         echo -e "${GREEN}OK${NC}. Goto installed (fast path swapping as 'variable')"
         
-        # Update the path 
-        echo -e "\nexport PATH=$PATH:$HOME/.cargo/bin:$HOME/.local/bin" >> $HOME/.zshrc
-
         #Finish
         echo -e "${CYAN}All should be set up :)!${NC}"
         echo -e "Now just use ${YELL}chsh${NC} command to change your shell!"
         ;;
     3)
         apt-get update -y > /dev/null
-        echo -e "Updated ${YELL} all ${NC}"
+        echo -e "Updated ${YELL}all${NC}!"
         apt-get upgrade -y > /dev/null
-        echo -e "Upgraded ${YELL} all ${NC}"
+        echo -e "Upgraded ${YELL}all${NC}!"
         apt-get install -y unzip > /dev/null
-        echo -e "Installed ${YELL} unzip ${NC}"
+        echo -e "Installed ${YELL}unzip${NC}!"
         apt-get install -y mc > /dev/null
-        echo -e "Installed ${YELL} Midnight Commander ${NC}"
+        echo -e "Installed ${YELL}Midnight Commander${NC}!"
         apt-get install -y neofetch > /dev/null
-        echo -e "Installed ${YELL} neofetch ${NC}"
+        echo -e "Installed ${YELL}neofetch${NC}!"
         apt-get install -y net-tools > /dev/null
-        echo -e "Installed ${YELL} net-tools ${NC}"
+        echo -e "Installed ${YELL}net-tools${NC}!"
         apt-get install -y tree > /dev/null
-        echo -e "Installed ${YELL} tree ${NC}"
+        echo -e "Installed ${YELL}tree${NC}!"
         apt-get install -y sntop > /dev/null
-        echo -e "Installed ${YELL} sntop ${NC}"
+        echo -e "Installed ${YELL}sntop${NC}!"
         apt-get install -y traceroute > /dev/null
-        echo -e "Installed ${YELL} traceroute ${NC}"
+        echo -e "Installed ${YELL}traceroute${NC}!"
         apt-get install -y nmap > /dev/null
-        echo -e "Installed ${YELL} nmap ${NC}"
+        echo -e "Installed ${YELL}nmap${NC}!"
         apt-get install -y python3-pip > /dev/null
-        echo -e "Installed ${YELL} python3-pip ${NC}"
+        echo -e "Installed ${YELL}python3-pip${NC} for ${CYAN}PYTHON${NC}!"
         pip3 install pygments > /dev/null
-        echo -e "Installed ${YELL} pygments ${NC}"
+        echo -e "Installed ${YELL}pygments${NC} for ${CYAN}PYTHON${NC}!"
+        apt-get install -y python3-venv > /dev/null
+        echo -e "Installed ${YELL}virtualenv${NC} for ${CYAN}PYTHON${NC}!"
         apt-get install -y mlocate > /dev/null
-        echo -e "Installed ${YELL} mlocate ${NC}"
+        echo -e "Installed ${YELL}mlocate${NC}!"
 
-        echo -e "${GREEN} All necessary packets should be installed by now :).${NC}"
+        echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}"
         ;;
     4)  
-        tee -a $HOME/.zshrc > /dev/null << END
+        tee -a $homedir/.zshrc > /dev/null << END
         env=~/.ssh/agent.env
 
         agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
@@ -148,9 +159,12 @@ case $choice in
         fi
 
         unset env
+END
         echo -e "${GREEN} Auto-SSH-agent startup added to shell.${NC}" 
         ;;
-END
+    5)
+        exit 0
+        ;;
     *)  
         echo "${RED}Sorry, wrong input :/${NC}"
         ;;
