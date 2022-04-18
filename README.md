@@ -10,6 +10,9 @@ This was made as an automatization with a little of my customization to The Digi
 Download here:
 - https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
 
+Files digital-life-theme.xaml and schemes.json are theme files which i didn't use,  
+but they might come handy if someone wants to develop full, uniform setup and dev stack 😁.  
+
 **Before you inject SSH startup script, use ssh-keygen! (more about below)**  
 
 **If any problems do occur or you do want to contact, catch me on GitHub.**  
