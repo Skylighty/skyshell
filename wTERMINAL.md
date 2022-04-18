@@ -22,7 +22,7 @@ Find schemes section in JSON:
 Paste the colors schemes from `theme-files/schemes.json`  
 Save the `settings.json` file you edited (config file for WinTerminal)  
 In the Terminal Setttings GUI go to **Profiles ➡️ Defaults ➡️ Appearance**  
-In the **Text** section select **Color Scheme** `xvad_tdl`.  
+In the **Text** section select **Color Scheme** `xcad_tdl`.  
 Select **FiraCode NF Retina** as Font face.  
 
 The rest of the settings I leave to you.  
