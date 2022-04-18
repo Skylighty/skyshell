@@ -116,8 +116,8 @@ do
             currpath=$PWD
             mkdir exa
             cd exa
-            wget https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip
-            unzip exa-linux-*.zip
+            wget https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip > /dev/null
+            unzip exa-linux-*.zip > /dev/null
             rm exa-linux-*.zip
             cp bin/exa /usr/local/bin/
             cp man/exa.1 /usr/share/man/man1
@@ -129,17 +129,17 @@ do
             unset currpath
             
             # Get syntax highlighting for zsh
-            git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $homedir/.zsh/zsh-syntax-highlighting > /dev/null
+            git clone --quiet https://github.com/zsh-users/zsh-syntax-highlighting.git $homedir/.zsh/zsh-syntax-highlighting > /dev/null
             echo -e "${GREEN}OK${NC}. Cloned syntax-highlighting for zsh, injecting source to .zshrc!"
             echo -e "\nsource $homedir/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> $homedir/.zshrc
     
             # Get autosuggestions and add it's source to zsh configfile
-            git clone https://github.com/zsh-users/zsh-autosuggestions $homedir/.zsh/zsh-autosuggestions > /dev/null
+            git clone --quiet https://github.com/zsh-users/zsh-autosuggestions $homedir/.zsh/zsh-autosuggestions > /dev/null
             echo -e "${GREEN}OK${NC}. Cloned auto-suggestions, injecting source to .zshrc!"
             echo -e "\nsource $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc
             
             # Install starship
-            echo -e "${RED}! WARNING !${NC} You have to confirm prompt here! [y] "
+            echo -e "${RED}! WARNING !${NC} You have to confirm prompt here! ${YELL}[y]${NC}"
             curl -sS https://starship.rs/install.sh | sh > /dev/null
             # inject starship config 
             mkdir $homedir/.config
@@ -147,10 +147,10 @@ do
             echo -e "${GREEN}OK${NC}. Starship installed, config at $homedir/.config/starship.toml"
     
             # Install goto
-            git clone https://github.com/iridakos/goto.git $homedir/goto
+            git clone --quiet https://github.com/iridakos/goto.git $homedir/goto > /dev/null
             currloc=$PWD
             cd $homedir/goto
-            ./install
+            ./install > /dev/null
             cd $currloc
             unset currloc
             echo -e "${GREEN}OK${NC}. Goto installed (fast path swapping as 'variable')"
