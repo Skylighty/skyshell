@@ -119,12 +119,16 @@ case $choice in
         echo -e "Installed ${YELL}net-tools${NC}!"
         apt-get install -y tree > /dev/null
         echo -e "Installed ${YELL}tree${NC}!"
-        apt-get install -y sntop > /dev/null
-        echo -e "Installed ${YELL}sntop${NC}!"
+        apt-get install -y iftop > /dev/null
+        echo -e "Installed ${YELL}iftop${NC}!"
         apt-get install -y traceroute > /dev/null
         echo -e "Installed ${YELL}traceroute${NC}!"
         apt-get install -y nmap > /dev/null
         echo -e "Installed ${YELL}nmap${NC}!"
+        apt-get install -y vnstat > /dev/null
+        echo -e "Installed ${YELL}vnstat${NC}!"
+        apt-get install -y hping3 > /dev/null
+        echo -e "Installed ${YELL}hping3${NC}!"
         apt-get install -y python3-pip > /dev/null
         echo -e "Installed ${YELL}python3-pip${NC} for ${CYAN}PYTHON${NC}!"
         pip3 install pygments > /dev/null
