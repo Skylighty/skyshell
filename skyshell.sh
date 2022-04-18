@@ -120,8 +120,8 @@ do
             unzip exa-linux-*.zip > /dev/null
             rm exa-linux-*.zip
             cp bin/exa /usr/local/bin/
-            cp man/exa.1 /usr/share/man/man1
-            cp man/exa_colors.5 /usr/share/man/man5
+            cp man/exa.1 /usr/share/man/man1/
+            cp man/exa_colors.5 /usr/share/man/man5/
             cp completions/exa.zsh /usr/local/share/zsh/site-functions/
             cd ..
             rm -r exa
