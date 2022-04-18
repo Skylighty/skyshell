@@ -49,8 +49,8 @@ while true
 do
     echo -e "\nChoose the operation you want to perform: "
     echo -e "1) Update & upgrade ${GREEN}(recommended first)${NC}"
-    echo "2) Install SkyShell"
-    echo -e "3) Install necessary shell shit :) ${GREEN}(recommended first)${NC}"
+    echo -e "2) Install necessary shell shit ${GREEN}(recommended first)${NC}"
+    echo -e "3) ${YELL}Install SkyShell!${NC}"
     echo -e "4) Inject auto SSH-agent to ZSH shell ${RED}(requires ssh-keygen first)!${NC}"
     echo -e "5) List of ${YELL}features${NC}"
     echo -e "6) ${RED}QUIT!${NC}"
@@ -64,6 +64,42 @@ do
             echo -e "\n${GREEN}OK${NC}. Updates should be all set :).\n"
             ;;
         2)
+            apt-get update -y > /dev/null
+            echo -e "\nUpdated ${YELL}all${NC}!"
+            apt-get upgrade -y > /dev/null
+            echo -e "Upgraded ${YELL}all${NC}!"
+            apt-get install -y unzip > /dev/null
+            echo -e "Installed ${YELL}unzip${NC}!"
+            apt-get install -y mc > /dev/null
+            echo -e "Installed ${YELL}Midnight Commander${NC}!"
+            apt-get install -y neofetch > /dev/null
+            echo -e "Installed ${YELL}neofetch${NC}!"
+            apt-get install -y net-tools > /dev/null
+            echo -e "Installed ${YELL}net-tools${NC}!"
+            apt-get install -y tree > /dev/null
+            echo -e "Installed ${YELL}tree${NC}!"
+            apt-get install -y iftop > /dev/null
+            echo -e "Installed ${YELL}iftop${NC}!"
+            apt-get install -y traceroute > /dev/null
+            echo -e "Installed ${YELL}traceroute${NC}!"
+            apt-get install -y nmap > /dev/null
+            echo -e "Installed ${YELL}nmap${NC}!"
+            apt-get install -y vnstat > /dev/null
+            echo -e "Installed ${YELL}vnstat${NC}!"
+            apt-get install -y hping3 > /dev/null
+            echo -e "Installed ${YELL}hping3${NC}!"
+            apt-get install -y python3-pip > /dev/null
+            echo -e "Installed ${YELL}python3-pip${NC} for ${CYAN}PYTHON${NC}!"
+            pip3 install pygments > /dev/null
+            echo -e "Installed ${YELL}pygments${NC} for ${CYAN}PYTHON${NC}!"
+            apt-get install -y python3-venv > /dev/null
+            echo -e "Installed ${YELL}virtualenv${NC} for ${CYAN}PYTHON${NC}!"
+            apt-get install -y mlocate > /dev/null
+            echo -e "Installed ${YELL}mlocate${NC}!\n"
+    
+            echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}\n"
+            ;;
+        3)
             # Install FiraCode fonts
             apt-get install -y fonts-firacode > /dev/null
             echo -e "\n${GREEN}OK${NC}. FiraCode fonts installed."
@@ -131,42 +167,7 @@ do
                 echo -e "${CYAN}All should be set up :)!${NC}"
             fi
             ;;
-        3)
-            apt-get update -y > /dev/null
-            echo -e "\nUpdated ${YELL}all${NC}!"
-            apt-get upgrade -y > /dev/null
-            echo -e "Upgraded ${YELL}all${NC}!"
-            apt-get install -y unzip > /dev/null
-            echo -e "Installed ${YELL}unzip${NC}!"
-            apt-get install -y mc > /dev/null
-            echo -e "Installed ${YELL}Midnight Commander${NC}!"
-            apt-get install -y neofetch > /dev/null
-            echo -e "Installed ${YELL}neofetch${NC}!"
-            apt-get install -y net-tools > /dev/null
-            echo -e "Installed ${YELL}net-tools${NC}!"
-            apt-get install -y tree > /dev/null
-            echo -e "Installed ${YELL}tree${NC}!"
-            apt-get install -y iftop > /dev/null
-            echo -e "Installed ${YELL}iftop${NC}!"
-            apt-get install -y traceroute > /dev/null
-            echo -e "Installed ${YELL}traceroute${NC}!"
-            apt-get install -y nmap > /dev/null
-            echo -e "Installed ${YELL}nmap${NC}!"
-            apt-get install -y vnstat > /dev/null
-            echo -e "Installed ${YELL}vnstat${NC}!"
-            apt-get install -y hping3 > /dev/null
-            echo -e "Installed ${YELL}hping3${NC}!"
-            apt-get install -y python3-pip > /dev/null
-            echo -e "Installed ${YELL}python3-pip${NC} for ${CYAN}PYTHON${NC}!"
-            pip3 install pygments > /dev/null
-            echo -e "Installed ${YELL}pygments${NC} for ${CYAN}PYTHON${NC}!"
-            apt-get install -y python3-venv > /dev/null
-            echo -e "Installed ${YELL}virtualenv${NC} for ${CYAN}PYTHON${NC}!"
-            apt-get install -y mlocate > /dev/null
-            echo -e "Installed ${YELL}mlocate${NC}!\n"
-    
-            echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}\n"
-            ;;
+        
         4)  
             FILE=$homedir/.ssh/id_rsa
             if [[ -f "$FILE" ]]; then
