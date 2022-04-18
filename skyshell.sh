@@ -56,8 +56,24 @@ read -p "Pick your choice: " choice
 case $choice in
     1)
         echo "${GREEN} Please wait patiently, updates are being downloaded & installed.${NC}"
-        apt-get update -y
-        apt-get upgrade -y
+        apt-get update -y &
+        PID=$!
+        i=1
+        sp="/-\|"
+        echo -n ' '
+        while [ -d /proc/$PID ]
+        do
+            printf "Proceeding \b${sp:i++%${#sp}:1}"
+        done
+        apt-get upgrade -y &
+        PID=$!
+        i=1
+        sp="/-\|"
+        echo -n ' '
+        while [ -d /proc/$PID ]
+        do
+          printf "Proceeding \b${sp:i++%${#sp}:1}"
+        done
         echo "${GREEN} OK. Updates should be all set :). ${NC}"
         ;;
     2)
