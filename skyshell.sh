@@ -157,7 +157,8 @@ do
             
     
             #Finish
-            if [ $whochoice -eq 2 ] then
+            if [[ $whochoice -eq 2 ]]
+            then
                 echo -e "Set password for $nwuname: "
                 passwd $nwuname
                 chsh $nwuname -s /bin/zsh
