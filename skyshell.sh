@@ -63,7 +63,7 @@ case $choice in
         echo -n ' '
         while [ -d /proc/$PID ]
         do
-            printf "Proceeding \b${sp:i++%${#sp}:1}"
+            printf "\b${sp:i++%${#sp}:1}"
         done
         apt-get upgrade -y &
         PID=$!
@@ -72,7 +72,7 @@ case $choice in
         echo -n ' '
         while [ -d /proc/$PID ]
         do
-          printf "Proceeding \b${sp:i++%${#sp}:1}"
+          printf "\b${sp:i++%${#sp}:1}"
         done
         echo -e "${GREEN} OK. Updates should be all set :). ${NC}"
         ;;
