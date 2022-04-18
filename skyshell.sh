@@ -27,7 +27,7 @@ case $whochoice in
     1)
         towho=root
         homedir=/root
-        echo "You'll find all added files in ${YELL}/root/${NC} directory."
+        echo -e "You'll find all added files in ${YELL}/root/${NC} directory."
         ;;
     2)
         read -p "Please input a name for your user: " nwuname
@@ -41,7 +41,7 @@ case $whochoice in
         exit 0
         ;;
     *)
-        echo "${RED}Sorry, wrong input :/${NC}"
+        echo -e "${RED}Sorry, wrong input :/${NC}"
         ;;
 esac
 
@@ -74,7 +74,7 @@ case $choice in
         do
           printf "Proceeding \b${sp:i++%${#sp}:1}"
         done
-        echo "${GREEN} OK. Updates should be all set :). ${NC}"
+        echo -e "${GREEN} OK. Updates should be all set :). ${NC}"
         ;;
     2)
         # Install FiraCode fonts
@@ -234,6 +234,6 @@ END
         exit 0
         ;;
     *)  
-        echo "${RED}Sorry, wrong input :/${NC}"
+        echo -e "${RED}Sorry, wrong input :/${NC}"
         ;;
 esac
