@@ -160,7 +160,7 @@ case $choice in
         ;;
     4)  
         FILE=$homedir/.ssh/id_rsa
-        if [[ -f "$FILE"; then ]]
+        if [[ -f "$FILE" ]]; then
             tee -a $homedir/.zshrc > /dev/null << END
             env=~/.ssh/agent.env
 
