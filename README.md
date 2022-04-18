@@ -24,8 +24,8 @@ Download here:
 ➡️ cd to skyshell  
 ➡️ Execute skyshell.sh: `./skyshell.sh`  
 ➡️ Select if you want to install for root or new sudoer of your choice  
-&emsp;✅ Choose 1 -> installs update & upgrade & unzip (necessary for 'exa' package)  
-&emsp;✅ Choose 2 -> installs as above + additional packets really cool for everyday usage  
+&emsp;&emsp;✅ Choose 1 -> installs update & upgrade & unzip (necessary for 'exa' package)  
+&emsp;&emsp;✅ Choose 2 -> installs as above + additional packets really cool for everyday usage  
 ➡️ Reload Shell and enjoy!  
 
 ## ⭐ SSH-Key - Optional ⭐  
@@ -37,7 +37,7 @@ Download here:
 ➡️ The process' PID should appear in format **Agent pid <nr>**  
 ➡️ Add private key to ssh-agent: `ssh-add ~/.ssh/ida_rsa`  
 ➡️ Add public key to GitHub so you can authenticate to GH server  
-&emsp;🔐 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account  
+&emsp;&emsp;🔐 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account  
 ➡️ Now you can execute script again and select option 4. to run ssh-agent with your privkey on every shell login  
 
 **Enjoy 💋**
