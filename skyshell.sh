@@ -139,7 +139,7 @@ do
             echo -e "\nsource $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc > /dev/null 
             
             # Install starship
-            echp -e "${RED}! WARNING !${NC} You have to confirm prompt here! [y] "
+            echo -e "${RED}! WARNING !${NC} You have to confirm prompt here! [y] "
             curl -sS https://starship.rs/install.sh | sh > /dev/null
             # inject starship config 
             mkdir $homedir/.config
