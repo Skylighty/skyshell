@@ -6,6 +6,7 @@
 # --------------------------------------
 # Some things should be done with if depending on user 
 # installing things for users is not properly configured.
+# Resolved - cargo not necessary, because it's Rust-sided 
 
 #COLOR CODES
 RED='\033[0;31m'
@@ -17,7 +18,7 @@ NC='\033[0m'
 #END OF COLOR CODES
 
 
-echo "For whom do you want to install SkyShell?" 
+echo -e "\nFor whom do you want to install SkyShell?" 
 echo -e "1) ${RED}root${NC} - global"
 echo "2) new sudo user"
 echo -e "3) ${RED}QUIT${NC}!"
@@ -44,12 +45,13 @@ case $whochoice in
         ;;
 esac
 
-echo -e "Choose the operation you want to perform: "
+echo -e "\nChoose the operation you want to perform: "
 echo -e "1) Update & upgrade ${GREEN}(recommended first)${NC}"
 echo "2) Install SkyShell"
-echo "3) Install necessary shell shit :)"
+echo -e "3) Install necessary shell shit :) ${GREEN}(recommended first)${NC}"
 echo -e "4) Inject auto SSH-agent to ZSH shell ${RED}(requires ssh-keygen first)!${NC}"
-echo -e "5) ${RED}QUIT!${NC}"
+echo -e "5) List of ${YELL}features${NC}"
+echo -e "6) ${RED}QUIT!${NC}"
 read -p "Pick your choice: " choice
 case $choice in
     1)
@@ -71,16 +73,29 @@ case $choice in
         cp .zshrc $homedir/ > /dev/null
         echo -e "${GREEN}OK${NC}. Zsh basic cfg copied to $homedir/.zshrc"
         
-        # Get Cargo meant for exa - ls
-        apt-get install -y cargo > /dev/null
-        echo -e "${GREEN}OK${NC}. Cargo installed."
+        # Install exa - cargoless, we don't need Rust environment (unnecesary 350MB)
+        currpath=$PWD
+        mkdir exa
+        cd exa
+        wget https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip
+        unzip exa-linux-*.zip
+        rm exa-linux-*.zip
+        cp bin/exa /usr/local/bin/
+        cp man/exa.1 /usr/share/man/man1
+        cp man/exa_colors.5 /usr/share/man/man5
+        cp completions/exa.zsh /usr/local/share/zsh/site-functions/
+        cd ..
+        rm -r exa
+        cd $currpath
+        unset currpath
         
-        # Install exa -ls 
-        cargo install exa > /dev/null
-        echo -e "${GREEN}OK${NC}. Exa (${YELL}ls${NC} swap with icons) installed by cargo."
-        
+        # Get syntax highlighting for zsh
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $homedir/.zsh/zsh-syntax-highlighting > /dev/null
+        echo -e "${GREEN}OK${NC}. Cloned syntax-highlighting for zsh, injecting source to .zshrc!"
+        echo -e "source $homedir/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> $homedir/.zshrc > /dev/null
+
         # Get autosuggestions and add it's source to zsh configfile
-        git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions > /dev/null
+        git clone https://github.com/zsh-users/zsh-autosuggestions $homedir/.zsh/zsh-autosuggestions > /dev/null
         echo -e "${GREEN}OK${NC}. Cloned auto-suggestions, injecting source to .zshrc!"
         echo -e "source $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc > /dev/null 
         
@@ -98,11 +113,14 @@ case $choice in
         cd $homedir/goto
         ./install
         cd $currloc
+        unset currloc
         echo -e "${GREEN}OK${NC}. Goto installed (fast path swapping as 'variable')"
         
+
         #Finish
         echo -e "${CYAN}All should be set up :)!${NC}"
         echo -e "Now just use ${YELL}chsh${NC} command to change your shell!"
+        echo -e "${RED}! WARNING !${NC} If you created a new user set password for him - ${YELL}passwd${NC}!"
         ;;
     3)
         apt-get update -y > /dev/null
@@ -141,32 +159,62 @@ case $choice in
         echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}"
         ;;
     4)  
-        tee -a $homedir/.zshrc > /dev/null << END
-        env=~/.ssh/agent.env
+        FILE=$homedir/.ssh/id_rsa
+        if [[ -f "$FILE"; then ]]
+            tee -a $homedir/.zshrc > /dev/null << END
+            env=~/.ssh/agent.env
 
-        agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+            agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
 
-        agent_start () {
-            (umask 077; ssh-agent >| "$env")
-            . "$env" >| /dev/null ; }
+            agent_start () {
+                (umask 077; ssh-agent >| "$env")
+                . "$env" >| /dev/null ; }
 
-        agent_load_env
+            agent_load_env
 
-        # agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
-        agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
+            # agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
+            agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
 
-        if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
-            agent_start
-            ssh-add ~/.ssh/id_rsa
-        elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
-            ssh-add ~/.ssh/id_rsa
-        fi
+            if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
+                agent_start
+                ssh-add ~/.ssh/id_rsa
+            elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
+                ssh-add ~/.ssh/id_rsa
+            fi
 
-        unset env
+            unset env
 END
+        else
+            echo -e "${RED}ERROR${NC} - no ssh-key available for user, use ${YELL}ssh-keygen${NC} and try again!"
+            exit 0
+        fi
         echo -e "${GREEN} Auto-SSH-agent startup added to shell.${NC}" 
         ;;
     5)
+        echo -e "${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
+        echo -e "${YELL}ZSH${NC} - whole setup bases on zsh shell"
+        echo -e "${YELL}Fish-like ZSH Autocompletion${NC} - it's convenient"
+        echo -e "${YELL}Fish-like${NC} syntax highlighting"
+        echo -e "${YELL}Starship prompt${NC} - simple, fast and pretty!"
+        echo -e "${YELL}FiraCode NerdFont${NC} - to display ${GREEN}ALLL${NC} of the icons!"
+        echo -e "${YELL}Exa${NC} ls, but better, serving icons :)!"
+        echo -e "${YELL}goto${NC} - aliasing script, made for memorizing long paths as keyword!"
+        echo -e "${CYAN}Linux packet - part${NC}"
+        echo -e "${YELL}Unzip${NC} - the shit we know, for .zip"
+        echo -e "${YELL}Midnight Commander${NC} - cmd commander, semi-GUI, top-alike"
+        echo -e "${YELL}neofetch${NC} - info about your os, terminal and setup"
+        echo -e "${YELL}tree${NC} - cool tool for listing nested dirs"
+        echo -e "${YELL}iftop${NC} - top-alike packet watchdog"
+        echo -e "${YELL}traceroute${NC} - needs no exaplanation i guess..."
+        echo -e "${YELL}nmap${NC} - network and port scanner"
+        echo -e "${YELL}vnstat${NC} - yet another net tools (packet watchdog)"
+        echo -e "${YELL}hping3${NC} - ping but more complex!"
+        echo -e "${YELL}pip${NC} - Python packet manager"
+        echo -e "${YELL}pygments${NC} - Python packet used for syntax-analyzing cat"
+        echo -e "${YELL}venv${NC} - virtual enviroment settler for Python"
+        echo -e "${YELL}mlocate${NC} - easy and cool tool for locating particular files in the system"
+        ;;
+    6)
         exit 0
         ;;
     *)  
