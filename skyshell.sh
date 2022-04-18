@@ -131,12 +131,12 @@ do
             # Get syntax highlighting for zsh
             git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $homedir/.zsh/zsh-syntax-highlighting > /dev/null
             echo -e "${GREEN}OK${NC}. Cloned syntax-highlighting for zsh, injecting source to .zshrc!"
-            echo -e "\nsource $homedir/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> $homedir/.zshrc > /dev/null
+            echo -e "\nsource $homedir/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> $homedir/.zshrc
     
             # Get autosuggestions and add it's source to zsh configfile
             git clone https://github.com/zsh-users/zsh-autosuggestions $homedir/.zsh/zsh-autosuggestions > /dev/null
             echo -e "${GREEN}OK${NC}. Cloned auto-suggestions, injecting source to .zshrc!"
-            echo -e "\nsource $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc > /dev/null 
+            echo -e "\nsource $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc
             
             # Install starship
             echo -e "${RED}! WARNING !${NC} You have to confirm prompt here! [y] "
