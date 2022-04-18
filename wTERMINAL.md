@@ -25,5 +25,5 @@ In the Terminal Setttings GUI go to **Profiles ➡️ Defaults ➡️ Appearance
 In the **Text** section select **Color Scheme** `xvad_tdl`.  
 Select **FiraCode NF Retina** as Font face.  
 
-The rest of the settings I leave to you.
-Customize it so it fits your demands and preferences 🤠
+The rest of the settings I leave to you.  
+Customize it so it fits your demands and preferences 🤠  
