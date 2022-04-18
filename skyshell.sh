@@ -55,26 +55,11 @@ echo -e "6) ${RED}QUIT!${NC}"
 read -p "Pick your choice: " choice
 case $choice in
     1)
-        echo "${GREEN} Please wait patiently, updates are being downloaded & installed.${NC}"
-        apt-get update -y &
-        PID=$!
-        i=1
-        sp="/-\|"
-        echo -n ' '
-        while [ -d /proc/$PID ]
-        do
-            printf "\b${sp:i++%${#sp}:1}"
-        done
-        apt-get upgrade -y &
-        PID=$!
-        i=1
-        sp="/-\|"
-        echo -n ' '
-        while [ -d /proc/$PID ]
-        do
-          printf "\b${sp:i++%${#sp}:1}"
-        done
-        echo -e "\n${GREEN} OK. Updates should be all set :). ${NC}\n"
+        echo -e "${GREEN} Please wait patiently, updates are being downloaded & installed.${NC}"
+        apt-get update -y > /dev/null
+        echo -e "${YELL}Updated${NC}. Upgrading now!"
+        apt-get upgrade -y > /dev/null
+        echo -e "\n${GREEN}OK${NC}. Updates should be all set :).\n"
         ;;
     2)
         # Install FiraCode fonts
