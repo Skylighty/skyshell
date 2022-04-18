@@ -18,7 +18,7 @@ NC='\033[0m'
 #END OF COLOR CODES
 
 
-echo -e "\nFor whom do you want to install SkyShell?" 
+echo -e "\n${PURP}For whom do you want to install SkyShell?${NC}" 
 echo -e "1) ${RED}root${NC} - global"
 echo "2) new sudo user"
 echo -e "3) ${RED}QUIT${NC}!"
@@ -47,7 +47,7 @@ esac
 
 while true
 do
-    echo -e "\nChoose the operation you want to perform: "
+    echo -e "\n${PURP}Choose the operation you want to perform: ${NC}"
     echo -e "1) Update & upgrade ${GREEN}(recommended first)${NC}"
     echo -e "2) Install necessary shell shit ${GREEN}(recommended first)${NC}"
     echo -e "3) ${YELL}Install SkyShell!${NC}"
@@ -57,8 +57,9 @@ do
     read -p "Pick your choice: " choice
     case $choice in
         1)
-            echo -e "${GREEN} Please wait patiently, updates are being downloaded & installed.${NC}"
+            echo -e "${GREEN}Please wait patiently, updates are being downloaded & installed.${NC}"
             apt-get update -y > /dev/null
+            apt-get install -y unzip > /dev/null
             echo -e "${YELL}Updated${NC}. Upgrading now!"
             apt-get upgrade -y > /dev/null
             echo -e "\n${GREEN}OK${NC}. Updates should be all set :).\n"
@@ -102,7 +103,7 @@ do
         3)
             # Install FiraCode fonts
             apt-get install -y fonts-firacode > /dev/null
-            echo -e "\n${GREEN}OK${NC}. FiraCode fonts installed."
+            echo -e "${GREEN}OK${NC}. FiraCode fonts installed."
     
             # Get ZSH
             apt-get install -y zsh > /dev/null
@@ -116,7 +117,7 @@ do
             currpath=$PWD
             mkdir exa
             cd exa
-            wget https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip > /dev/null
+            wget -q https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip > /dev/null
             unzip exa-linux-*.zip > /dev/null
             rm exa-linux-*.zip
             cp bin/exa /usr/local/bin/
