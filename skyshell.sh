@@ -41,7 +41,7 @@ case $whochoice in
         exit 0
         ;;
     *)
-        echo -e "${RED}Sorry, wrong input :/${NC}"
+        echo -e "\n${RED}Sorry, wrong input :/${NC}\n"
         ;;
 esac
 
@@ -74,12 +74,12 @@ case $choice in
         do
           printf "\b${sp:i++%${#sp}:1}"
         done
-        echo -e "${GREEN} OK. Updates should be all set :). ${NC}"
+        echo -e "\n${GREEN} OK. Updates should be all set :). ${NC}\n"
         ;;
     2)
         # Install FiraCode fonts
         apt-get install -y fonts-firacode > /dev/null
-        echo -e "${GREEN}OK${NC}. FiraCode fonts installed."
+        echo -e "\n${GREEN}OK${NC}. FiraCode fonts installed."
 
         # Get ZSH
         apt-get install -y zsh > /dev/null
@@ -136,11 +136,11 @@ case $choice in
         #Finish
         echo -e "${CYAN}All should be set up :)!${NC}"
         echo -e "Now just use ${YELL}chsh${NC} command to change your shell!"
-        echo -e "${RED}! WARNING !${NC} If you created a new user set password for him - ${YELL}passwd${NC}!"
+        echo -e "${RED}! WARNING !${NC} If you created a new user set password for him - ${YELL}passwd${NC}!\n"
         ;;
     3)
         apt-get update -y > /dev/null
-        echo -e "Updated ${YELL}all${NC}!"
+        echo -e "\nUpdated ${YELL}all${NC}!"
         apt-get upgrade -y > /dev/null
         echo -e "Upgraded ${YELL}all${NC}!"
         apt-get install -y unzip > /dev/null
@@ -170,9 +170,9 @@ case $choice in
         apt-get install -y python3-venv > /dev/null
         echo -e "Installed ${YELL}virtualenv${NC} for ${CYAN}PYTHON${NC}!"
         apt-get install -y mlocate > /dev/null
-        echo -e "Installed ${YELL}mlocate${NC}!"
+        echo -e "Installed ${YELL}mlocate${NC}!\n"
 
-        echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}"
+        echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}\n"
         ;;
     4)  
         FILE=$homedir/.ssh/id_rsa
@@ -201,13 +201,13 @@ case $choice in
             unset env
 END
         else
-            echo -e "${RED}ERROR${NC} - no ssh-key available for user, use ${YELL}ssh-keygen${NC} and try again!"
+            echo -e "\n${RED}ERROR${NC} - no ssh-key available for user, use ${YELL}ssh-keygen${NC} and try again!\n"
             exit 0
         fi
-        echo -e "${GREEN} Auto-SSH-agent startup added to shell.${NC}" 
+        echo -e "\n${GREEN} Auto-SSH-agent startup added to shell.${NC}\n" 
         ;;
     5)
-        echo -e "${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
+        echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
         echo -e "${YELL}ZSH${NC} - whole setup bases on zsh shell"
         echo -e "${YELL}Fish-like ZSH Autocompletion${NC} - it's convenient"
         echo -e "${YELL}Fish-like${NC} syntax highlighting"
@@ -215,7 +215,7 @@ END
         echo -e "${YELL}FiraCode NerdFont${NC} - to display ${GREEN}ALLL${NC} of the icons!"
         echo -e "${YELL}Exa${NC} ls, but better, serving icons :)!"
         echo -e "${YELL}goto${NC} - aliasing script, made for memorizing long paths as keyword!"
-        echo -e "${CYAN}Linux packet - part${NC}"
+        echo -e "\n${CYAN}Linux packet - part${NC}"
         echo -e "${YELL}Unzip${NC} - the shit we know, for .zip"
         echo -e "${YELL}Midnight Commander${NC} - cmd commander, semi-GUI, top-alike"
         echo -e "${YELL}neofetch${NC} - info about your os, terminal and setup"
@@ -228,12 +228,12 @@ END
         echo -e "${YELL}pip${NC} - Python packet manager"
         echo -e "${YELL}pygments${NC} - Python packet used for syntax-analyzing cat"
         echo -e "${YELL}venv${NC} - virtual enviroment settler for Python"
-        echo -e "${YELL}mlocate${NC} - easy and cool tool for locating particular files in the system"
+        echo -e "${YELL}mlocate${NC} - easy and cool tool for locating particular files in the system\n"
         ;;
     6)
         exit 0
         ;;
     *)  
-        echo -e "${RED}Sorry, wrong input :/${NC}"
+        echo -e "\n${RED}Sorry, wrong input :/${NC}\n"
         ;;
 esac
