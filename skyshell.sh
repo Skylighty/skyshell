@@ -51,9 +51,8 @@ do
     echo -e "1) Update & upgrade ${GREEN}(recommended first)${NC}"
     echo -e "2) Install necessary shell shit ${GREEN}(recommended first)${NC}"
     echo -e "3) ${YELL}Install SkyShell!${NC}"
-    echo -e "4) Inject auto SSH-agent to ZSH shell ${RED}(requires ssh-keygen first)!${NC}"
-    echo -e "5) List of ${YELL}features${NC}"
-    echo -e "6) ${RED}QUIT!${NC}"
+    echo -e "4) List of ${YELL}features${NC}"
+    echo -e "5) ${RED}QUIT!${NC}"
     read -p "Pick your choice: " choice
     case $choice in
         1)
@@ -171,38 +170,7 @@ do
                 echo -e "${CYAN}All should be set up :)!${NC}"
             fi
             ;;
-        
-4)  
-            FILE=$homedir/.ssh/id_rsa
-            if [[ -f "$FILE" ]]; then
-                tee -a $homedir/.zshrc > /dev/null << EOF
-env=~/.ssh/agent.env
-
-agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
-
-agent_start () {
-    (umask 077; ssh-agent >| "$env")
-    . "$env" >| /dev/null ; }
-
-agent_load_env
-
-agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $ $?)
-
-if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
-    agent_start
-    ssh-add ~/.ssh/id_rsa
-elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
-    ssh-add ~/.ssh/id_rsa
-fi
-unset env
-EOF
-            else
-                echo -e "\n${RED}ERROR${NC} - no ssh-key available for user, use ${YELL}ssh-keygen${NC} and try again!\n"
-                exit 0
-            fi
-            echo -e "\n${GREEN} Auto-SSH-agent startup added to shell.${NC}\n" 
-            ;;
-        5)
+        4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
             echo -e "${YELL}ZSH${NC} - whole setup bases on zsh shell"
             echo -e "${YELL}Fish-like ZSH Autocompletion${NC} - it's convenient"
@@ -226,7 +194,7 @@ EOF
             echo -e "${YELL}venv${NC} - virtual enviroment settler for Python"
             echo -e "${YELL}mlocate${NC} - easy and cool tool for locating particular files in the system\n"
             ;;
-        6)
+        5)
             break
             exit 0
             ;;

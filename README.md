@@ -33,16 +33,4 @@ but they might come handy if someone wants to develop full, uniform setup and de
 &emsp;&emsp;&emsp;✅ Choose 2 -> installs as above + additional packets really cool for everyday usage  
 ➡️ Reload Shell and enjoy!  
 
-## ⭐ SSH-Key - Optional ⭐  
-
-➡️ In the shell use ssh-keygen (for id_rsa key) with password of your choice  
-➡️ Check if private and public keys are added: `ls ~/.ssh/`  
-➡️ Should return: id_rsa (your private key), id_rsa.pub (your public key)  
-➡️ Start ssh agent in the background: `eval "$(ssh-agent -s)"`  
-➡️ The process' PID should appear in format **Agent pid <nr>**  
-➡️ Add private key to ssh-agent: `ssh-add ~/.ssh/ida_rsa`  
-➡️ Add public key to GitHub so you can authenticate to GH server:  
-&emsp;&emsp;&emsp;🔐 [CLICK](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)  
-➡️ Now you can execute script again and select option 4. to run ssh-agent with your privkey on every shell login  
-
 **Enjoy 💋**
