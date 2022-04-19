@@ -172,18 +172,22 @@ do
             fi
             ;;
         
-        4)  
+4)  
             FILE=$homedir/.ssh/id_rsa
             if [[ -f "$FILE" ]]; then
                 tee -a $homedir/.zshrc > /dev/null << EOF
-env=~/.ssh/agent.e
-agent_load_env () { test -f "$env" && . "$env" >| /dev/null ;
+env=~/.ssh/agent.env
+
+agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+
 agent_start () {
     (umask 077; ssh-agent >| "$env")
-agent_load_e
-    . "$env" >| /dev/null ;
-# agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
-agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $
+    . "$env" >| /dev/null ; }
+
+agent_load_env
+
+agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $ $?)
+
 if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
     agent_start
     ssh-add ~/.ssh/id_rsa
