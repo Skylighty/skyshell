@@ -201,7 +201,8 @@ do
             fi
             echo -e "${YELL}CosmicNvim${NC} has been installed."
             echo -e "Use ${CYAN}\'nvim +CosmicReloadSync\'${NC} to finish!"
-            echo -e "Remember to check the wiki - ${PURP}https://github.com/CosmicNvim/CosmicNvim/wiki${NC}!"
+            echo -e "When in nvim remember to use ${CYAN}\':PackerSync\'${NC} and ${CYAN}\':PackerCompile\'${NC}!"
+            echo -e "Remember to check the wiki - ${PURP}https://github.com/CosmicNvim/CosmicNvim/wiki${NC}\n!"
             ;;
         4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
