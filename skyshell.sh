@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# !!!!!!! 
+# !!!!!!!
 # TODO
-# Fix .cargo PATH problem for new user 
+# Fix .cargo PATH problem for new user
 # --------------------------------------
-# Some things should be done with if depending on user 
+# Some things should be done with if depending on user
 # installing things for users is not properly configured.
-# Resolved - cargo not necessary, because it's Rust-sided 
+# Resolved - cargo not necessary, because it's Rust-sided
 
 #COLOR CODES
 RED='\033[0;31m'
@@ -18,7 +18,7 @@ NC='\033[0m'
 #END OF COLOR CODES
 
 
-echo -e "\n${PURP}For whom do you want to install SkyShell?${NC}" 
+echo -e "\n${PURP}For whom do you want to install SkyShell?${NC}"
 echo -e "1) ${RED}root${NC} - global"
 echo "2) new sudo user"
 echo -e "3) ${RED}QUIT${NC}!"
@@ -95,23 +95,31 @@ do
             apt-get install -y python3-venv > /dev/null
             echo -e "Installed ${YELL}virtualenv${NC} for ${CYAN}PYTHON${NC}!"
             apt-get install -y mlocate > /dev/null
-            echo -e "Installed ${YELL}mlocate${NC}!\n"
-    
+            echo -e "Installed ${YELL}mlocate${NC}!"
+            apt-get install -y nodejs > /dev/null
+            echo -e "Installed ${YELL}nodejs${NC}!"
+            apt-get install -y npm > /dev/null
+            echo -e "Installed ${YELL}npm${NC}"
+            npm install --quiet -g @fsouza/pretierrd
+            echo -e "Installed ${YELL}prettierd${NC}"
+            npm install --quiet -g eslint_d
+
+
             echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}\n"
             ;;
         3)
             # Install FiraCode fonts
             apt-get install -y fonts-firacode > /dev/null
             echo -e "${GREEN}OK${NC}. FiraCode fonts installed."
-    
+
             # Get ZSH
             apt-get install -y zsh > /dev/null
             echo -e "${GREEN}OK${NC}. Zsh installed."
-    
+
             # Copy ZSH config to homedir
             cp .zshrc $homedir/ > /dev/null
             echo -e "${GREEN}OK${NC}. Zsh basic cfg copied to $homedir/.zshrc"
-            
+
             # Install exa - cargoless, we don't need Rust environment (unnecesary 350MB)
             currpath=$PWD
             mkdir exa
@@ -127,25 +135,25 @@ do
             rm -r exa
             cd $currpath
             unset currpath
-            
+
             # Get syntax highlighting for zsh
             git clone --quiet https://github.com/zsh-users/zsh-syntax-highlighting.git $homedir/.zsh/zsh-syntax-highlighting > /dev/null
             echo -e "${GREEN}OK${NC}. Cloned syntax-highlighting for zsh, injecting source to .zshrc!"
             echo -e "\nsource $homedir/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> $homedir/.zshrc
-    
+
             # Get autosuggestions and add it's source to zsh configfile
             git clone --quiet https://github.com/zsh-users/zsh-autosuggestions $homedir/.zsh/zsh-autosuggestions > /dev/null
             echo -e "${GREEN}OK${NC}. Cloned auto-suggestions, injecting source to .zshrc!"
             echo -e "\nsource $homedir/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $homedir/.zshrc
-            
+
             # Install starship
             echo -e "${RED}! WARNING !${NC} You have to confirm prompt here! ${YELL}[y]${NC}"
             curl -sS https://starship.rs/install.sh | sh > /dev/null
-            # inject starship config 
+            # inject starship config
             mkdir $homedir/.config
             cp starship.toml $homedir/.config/
             echo -e "${GREEN}OK${NC}. Starship installed, config at $homedir/.config/starship.toml"
-    
+
             # Install goto
             git clone --quiet https://github.com/iridakos/goto.git $homedir/goto > /dev/null
             currloc=$PWD
@@ -154,8 +162,8 @@ do
             cd $currloc
             unset currloc
             echo -e "${GREEN}OK${NC}. Goto installed (fast path swapping as 'variable')"
-            
-    
+
+
             #Finish
             if [[ $whochoice -eq 2 ]]
             then
@@ -169,7 +177,28 @@ do
                 chsh root -s /bin/zsh
                 echo -e "${CYAN}All should be set up :)!${NC}"
             fi
-            ;;
+
+            # INSTALL COSMIC NVIM
+            echo -e "Installing ${YELL}NVIM{$NC}"
+            git clone
+            echo -e "Installing ${YELL}CosmicNvim!${NC} for user ${RED}${nwuname}${NC}"
+            git clone https://github.com/CosmicNvim/CosmicNvim.git nvim
+            if [[ $whochoice -eq 2 ]]
+            then
+              if [[ ! -d "/home/$nwuname/.config "]]
+              then
+                mkdir -p /home/$nwuname/.config
+              fi
+              mv nvim /home/$nwuname/.config
+            else
+              if [[ ! -d "/root/.config" ]]
+              then
+                mkdir -p /root/.config
+              fi
+              mv nvim /root/.config
+            fi
+
+              ;;
         4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
             echo -e "${YELL}ZSH${NC} - whole setup bases on zsh shell"
@@ -198,7 +227,7 @@ do
             break
             exit 0
             ;;
-        *)  
+        *)
             echo -e "\n${RED}Sorry, wrong input :/${NC}\n"
             ;;
     esac
