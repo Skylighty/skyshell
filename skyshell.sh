@@ -99,10 +99,12 @@ do
             apt-get install -y nodejs > /dev/null
             echo -e "Installed ${YELL}nodejs${NC}!"
             apt-get install -y npm > /dev/null
-            echo -e "Installed ${YELL}npm${NC}"
+            echo -e "Installed ${YELL}npm${NC}!"
             npm install --quiet -g @fsouza/pretierrd
-            echo -e "Installed ${YELL}prettierd${NC}"
+            echo -e "Installed ${YELL}prettierd${NC}!"
             npm install --quiet -g eslint_d
+            echo -e "Installed ${YELL}eslint_d${NC}!\n"
+
 
 
             echo -e "${GREEN}All necessary packets should be installed by now :)!${NC}\n"
@@ -197,8 +199,10 @@ do
               fi
               mv nvim /root/.config
             fi
-
-              ;;
+            echo -e "${YELL}CosmicNvim${NC} has been installed."
+            echo -e "Use ${CYAN}\'nvim +CosmicReloadSync\'${NC} to finish!"
+            echo -e "Remember to check the wiki - ${PURP}https://github.com/CosmicNvim/CosmicNvim/wiki${NC}!"
+            ;;
         4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
             echo -e "${YELL}ZSH${NC} - whole setup bases on zsh shell"
