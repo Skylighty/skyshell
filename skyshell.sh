@@ -203,6 +203,14 @@ do
             echo -e "Use ${CYAN}\'nvim +CosmicReloadSync\'${NC} to finish!"
             echo -e "When in nvim remember to use ${CYAN}\':PackerSync\'${NC} and ${CYAN}\':PackerCompile\'${NC}!"
             echo -e "Remember to check the wiki - ${PURP}https://github.com/CosmicNvim/CosmicNvim/wiki${NC}\n!"
+            echo -e "Injecting aliases into .zshrc file!"
+            if [[ $whochoice -eq 2 ]]
+            then
+              rcpath=/home/$nwuname/.zshrc
+            else
+              rcpath=/root/.zshrc
+            echo "alias k=\"kubectl\""
+            echo "alias aliases=\"cat ~/.zshrc | grep alias\""
             ;;
         4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
