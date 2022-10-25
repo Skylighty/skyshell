@@ -203,7 +203,7 @@ do
             git clone https://github.com/CosmicNvim/CosmicNvim.git nvim
             if [[ $whochoice -eq 2 ]]
             then
-                if [[ ! -d "/home/$nwuname/.config"]]
+                if [[ ! -d "/home/$nwuname/.config" ]]
                 then
                     mkdir -p /home/$nwuname/.config
                 fi
