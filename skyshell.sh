@@ -225,9 +225,11 @@ do
                 rcpath=/home/$nwuname/.zshrc
             else
                 rcpath=/root/.zshrc
+            fi
+            ;;
             #echo "alias k=\"kubectl\""
             #echo "alias aliases=\"cat ~/.zshrc | grep alias\""
-            ;;
+            #
         4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
             echo -e "${YELL}ZSH${NC} - whole setup bases on zsh shell"
