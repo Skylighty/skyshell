@@ -222,11 +222,11 @@ do
             echo -e "Injecting aliases into .zshrc file!"
             if [[ $whochoice -eq 2 ]]
             then
-              rcpath=/home/$nwuname/.zshrc
+                rcpath=/home/$nwuname/.zshrc
             else
-              rcpath=/root/.zshrc
-            echo "alias k=\"kubectl\""
-            echo "alias aliases=\"cat ~/.zshrc | grep alias\""
+                rcpath=/root/.zshrc
+            #echo "alias k=\"kubectl\""
+            #echo "alias aliases=\"cat ~/.zshrc | grep alias\""
             ;;
         4)
             echo -e "\n${CYAN}To view details use manual-db -> ${YELL}man <packet-name>${NC} after install!${NC}"
