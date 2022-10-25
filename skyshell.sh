@@ -201,16 +201,19 @@ do
             git clone
             echo -e "Installing ${YELL}CosmicNvim!${NC} for user ${RED}${nwuname}${NC}"
             git clone https://github.com/CosmicNvim/CosmicNvim.git nvim
-            if [[ $whochoice -eq 2 ]]; then
-              if [[ ! -d "/home/$nwuname/.config "]]; then
-                mkdir -p /home/$nwuname/.config
-              fi
-              mv nvim /home/$nwuname/.config
+            if [[ $whochoice -eq 2 ]]
+            then
+                if [[ ! -d "/home/$nwuname/.config"]]
+                then
+                    mkdir -p /home/$nwuname/.config
+                fi
+                mv nvim /home/$nwuname/.config
             else
-              if [[ ! -d "/root/.config" ]]; then
-                mkdir -p /root/.config
-              fi
-              mv nvim /root/.config
+                if [[ ! -d "/root/.config" ]]
+                then
+                    mkdir -p /root/.config
+                fi
+                mv nvim /root/.config
             fi
             echo -e "${YELL}CosmicNvim${NC} has been installed."
             echo -e "Use ${CYAN}\'nvim +CosmicReloadSync\'${NC} to finish!"
