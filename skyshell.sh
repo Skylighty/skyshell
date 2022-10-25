@@ -198,7 +198,7 @@ do
 
             # INSTALL COSMIC NVIM
             echo -e "Installing ${YELL}NVIM{$NC}"
-            git clone https://github.com/neovim/neovim/releases/download/v0.8.0/nvim-linux64.deb
+            wget https://github.com/neovim/neovim/releases/download/v0.8.0/nvim-linux64.deb
             dpkg -i nvim-linux64.deb
             rm nvim-linux64.deb
             echo -e "Installing ${YELL}CosmicNvim!${NC} for user ${RED}${nwuname}${NC}"
