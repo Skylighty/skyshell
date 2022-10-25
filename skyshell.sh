@@ -103,7 +103,23 @@ do
             npm install --quiet -g @fsouza/pretierrd
             echo -e "Installed ${YELL}prettierd${NC}!"
             npm install --quiet -g eslint_d
-            echo -e "Installed ${YELL}eslint_d${NC}!\n"
+            echo -e "Installed ${YELL}eslint_d${NC}!"
+            apt-get install -y duf > /dev/null
+            echo -e "Installed ${YELL}duf${NC}"
+            apt-get install -y ripgrep > /dev/null
+            echo -e "Installed ${YELL}ripgrep${NC}"
+            apt-get install -y fd > /dev/null
+            echo -e "Installed ${YELL}fd${NC}"
+            apt-get install -y tldr > /dev/null
+            echo -e "Installed ${YELL}tldr${NC}"
+            npm install --quiet -g gtop
+            echo -e "Installed ${YELL}gtop${NC}"
+            cargo install procs
+            echo -e "Installed ${YELL}cargo${NC}"
+            curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
+            echo -e "Installed ${YELL}xh${NC}"
+
+
 
 
 
