@@ -57,6 +57,7 @@ case $choice in
         install_package "python3-venv"
         python3 -m pip install --user pygments > /dev/null 2>&1
         install_package "mlocate"
+        install_package "cargo"
         install_package "duf"
         install_package "ripgrep"
         install_package "tldr"
@@ -77,12 +78,17 @@ case $choice in
         source "$HOME/.profile"
 
         # Install skyshell
+
+        # Copy the dotfiles
         echo -e "${YELL}Setting up skyshell...${NC}"
-        cp -r ./dotfiles/* "$HOME/"
+        cp -r ./dotfiles/. $HOME/
+        
+        # Install last packages
         install_package "fonts-firacode"
         install_package "zsh"
         install_package "exa"
-        cp .zshrc "$HOME/"
+
+        # Install lvim
         wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
         sudo mv ./nvim-linux64/bin/nvim /usr/local/bin
