@@ -101,7 +101,7 @@ case $chocie in
         # Get ZSH
         sudo apt-get install -y zsh > /dev/null
         echo -e "${GREEN}OK${NC}. Zsh installed."
-        
+
         # Install exa
         sudo apt-get install -y exa > /dev/null
         echo -e "${GREEN}OK${NC} Installed exa - modern ls command replacement"
@@ -114,7 +114,7 @@ case $chocie in
         echo -e "${OK} Installing LunarVim! Static nvim0.9 will be downloaded"
         wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
-        mv ./nvim-linux64/bin/nvim /usr/local/bin > /dev/null 2>&
+        mv ./nvim-linux64/bin/nvim /usr/local/bin
         sudo rm -rf ./nvim-linux64 > /dev/null 2>&
         export PATH=${PATH}:/usr/local/bin/
         LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
