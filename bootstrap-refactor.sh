@@ -106,6 +106,8 @@ case $choice in
         # Cleanup
         rm -f nvim-linux64.tar.gz
 
+        sudo chsh $USER -s /bin/zsh
+
         echo -e "${GREEN}All done!${NC}"
         ;;
     'n')
