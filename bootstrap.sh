@@ -12,7 +12,7 @@ NC='\033[0m'
 echo -e "${RED}WARNING!${NC} This program may install some heavy-weight features and apps in your system. Do you want to proceed? [${GREEN}y${NC}/${RED}n${NC}]:"
 read -p "Your answer: " choice
 case $chocie in 
-    y)
+    'y')
 
         # ===================================================================================================================================================
         # Install dependencies
@@ -157,7 +157,7 @@ case $chocie in
         # ===================================================================================================================================================
         ;;
 
-    n)
+    'n')
         break
         exit 0 
         ;;
