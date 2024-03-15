@@ -54,7 +54,7 @@ alias cats="pygmentize -g -O style=monokai"
 alias ports="ss -tulnap"
 alias grep='grep --color'
 alias su='su -'
-
+alias python='python3'
 alias cbp="code /home/xcad/obsidianvault/boilerplates"
 alias cpr="code /home/xcad/obsidianvault/projects"
 
@@ -97,6 +97,32 @@ esac
 
 export STARSHIP_DISTRO="$ICON"
 
+# Plugins
+source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.zsh/zsh-z/zsh-z.plugin.zsh
+source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/.zsh/zsh-abbr/zsh-abbr.plugin.zsh
+
 # Load Starship
 eval "$(starship init zsh)"
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/$HOME/static/nvim/bin"
+export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
+alias vim="lvim"
+alias containers="sudo docker ps -a"
+#alias docker="sudo docker"
+alias killdock='docker rm -f fea72a7ec886'
+export MODULAR_HOME="$HOME/.modular"
+export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
+alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
+
+if [ -z "$TMUX" ]; then
+  exec tmux  
+fi
+
+autoload -U compinit; compinit
+
+alias desktop='/mnt/c/Users/Pablo/Desktop'
+alias downloads='/mnt/c/Users/Pablo/Downloads'
+
+export NPM_CONFIG_PREFIX=$HOME/.npm-global
+export PATH="${PATH}:/$HOME/.npm-global/bin"
