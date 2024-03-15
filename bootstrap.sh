@@ -129,11 +129,11 @@ case $chocie in
 
         # Install nodejs dependent packages
         # source $HOME/.zshrc/
-        npm install --quiet -g @fsouza/pretierrd > /dev/null 2>&
+        npm install --quiet -g @fsouza/pretierrd
         echo -e "Installed ${YELL}prettierd${NC}!"
-        npm install --quiet -g eslint_d > /dev/null 2>&
+        npm install --quiet -g eslint_d
         echo -e "Installed ${YELL}eslint_d${NC}!"
-        npm install --quiet -g gtop > /dev/null 2>&
+        npm install --quiet -g gtop
         echo -e "Installed ${YELL}gtop${NC}"
         
         # Install exa - cargoless, we don't need Rust environment (unnecesary 350MB)
