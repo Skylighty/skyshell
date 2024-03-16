@@ -33,6 +33,16 @@ remove_package() {
 }
 
 
+npm_install_global() {
+    if npm install -g --quiet "$@" > /dev/null 2>&1; then
+        echo -e "Installation of ${YELL}$@ ${GREEN}succeeded${NC}."
+    else
+        local exit_code=$?
+        echo -e "Installation of ${YELL}$@ ${RED}failed${NC} with exit code${RED} $exit_code${NC}."
+    fi
+}
+
+
 echo -e "${RED}WARNING!${NC} This program may install some heavy-weight features and apps on your system. Do you want to proceed? [${GREEN}y${NC}/${RED}n${NC}]:"
 read -p "Your answer: " choice
 
@@ -126,9 +136,9 @@ case $choice in
         # Install starship and lvim
         echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"
         echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
-        npm install --quiet -g @fsouza/prettierd
-        npm install --quiet -g eslint_d
-        npm install --quiet -g gtop
+        npm_install_global "@fsouza/prettierd"
+        npm_install_global "eslint_d"
+        npm_install_global "gtop"
 
         # Set good things in the system
         sudo chsh $USER -s /bin/zsh
