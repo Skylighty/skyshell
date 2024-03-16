@@ -1,36 +1,45 @@
 # ⭐ About & Help ⭐
 
-This shell customization solution bases on ZSH and Starship Prompt.  
-It's recommended that you use **VSCode** + **Windows Terminal**.  
+That's my shell which should be user friendly and look really nice.  
+It's recommended that you use **VSCode** + **Windows Terminal** or **Tabby** if preffered.  
 In both of above programmes you have to set some of NerdFonts as FaceFont.  
 
-This was made as an automatization with a little of my customization to The Digital Life dotfiles:
-- https://github.com/xcad2k/dotfiles
+Setup bases on the:
+* Catpuccin Mocha themes
+* Starship Prompt
+* LunarVim (lvim) 
+* tmux
+    * tpm
+    * tmux-sensible
+    * tmux-yank
+    * vim-tmux-navigator
+* zsh
+    * zsh-abbr
+    * zsh-autosuggestions
+    * zsh-syntax-highlighting
+    * zsh-z
 
-Download here:
-- https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
 
-Files digital-life-theme.xaml and schemes.json are theme files which i didn't use,  
-but they might come handy if someone wants to develop full, uniform setup and dev stack 😁.  
-
-⭐ For the Windows Terminal color scheme & font settings visit **wTERMINAL.md**.
-
-**Before you inject SSH startup script, use ssh-keygen! (more about below)**  
-
-**If any problems do occur or you do want to contact, catch me on GitHub.**  
+I handled all of the necessary dependencies for the applications and mods above so you don't have to, however i am not sure how will it work in the future when new versions of software will drop.
 
 ```diff
-- WARNING! Execute this script as root!
+- WARNING! It's a good practice to have newest nodejs, npm and rustc installed, because the dependencies are really picky here - look for the problems there at first.
+- Works on Debian/Ubuntu only because of apt and names of packets in these OSes.
 ```
+
+Additional insipration provided by Christian Lempa here:
+- https://github.com/xcad2k/dotfiles
+
+Download FiraCode fonts here:
+- https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
+
 
 ## ⭐ Install instruction for dummies ⭐ 
 
-➡️ Clone from url: `git clone <url from github>`  
+➡️ Clone from url: `git clone https://github.com/Skylighty/skyshell.git`  
 ➡️ cd to skyshell  
-➡️ Execute skyshell.sh: `./skyshell.sh`  
-➡️ Select if you want to install for root or new sudoer of your choice  
-&emsp;&emsp;&emsp;✅ Choose 1 -> installs update & upgrade & unzip (necessary for 'exa' package)  
-&emsp;&emsp;&emsp;✅ Choose 2 -> installs as above + additional packets really cool for everyday usage  
-➡️ Reload Shell and enjoy!  
+➡️ Execute skyshell.sh: `./bootstrap.sh`  
+➡️ You will have to confirm in few places but it shouldn't be a problem at all.  
+➡️ Reload Shell with `su <user>` </user>and enjoy!  
 
 **Enjoy 💋**
