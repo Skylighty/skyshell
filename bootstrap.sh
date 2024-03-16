@@ -80,7 +80,7 @@ case $choice in
         wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
         mkdir $HOME/static/
-        mv ./nvim-linux64/bin/nvim $HOME/static/
+        mv ./nvim-linux64 $HOME/static/
         echo -e "PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
         export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin
         sudo rm -rf ./nvim-linux64.tar.gz 
