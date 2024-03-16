@@ -75,10 +75,7 @@ case $choice in
         install_package "duf"
         install_package "ripgrep"
         install_package "tldr"
-        spawn curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
-        expect "Install location [default: /usr/local/bin]"
-        send -- "\r"
-        excpect eof
+        curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
         cargo install procs
 
         # Setup rust
@@ -142,15 +139,8 @@ case $choice in
         
         # Install lvim
         export PATH="${PATH}:/usr/local/bin/"
-        spawn LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-        expect "[y]es or [n]o (default: no)"
-        send -- "y\r"
-        expect "[y]es or [n]o (default: no)"
-        send -- "y\r"
-        expect "[y]es or [n]o (default: no)"
-        send -- "y\r"
-        expect eof
-
+        LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
+        
 
         # Cleanup
         rm -f nvim-linux64.tar.gz
