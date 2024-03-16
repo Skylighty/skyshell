@@ -21,6 +21,18 @@ install_package() {
     fi
 }
 
+remove_package() {
+    package=$1
+    echo -e "${RED}Purging ${YELL}$package${NC}..."
+    sudo apt-get purge --auto-remove -y "$package" > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo -e "[ ${GREEN}OK${NC} ] Removed ${YELL}$package${NC} and all it's dependencies!"
+    else
+        echo -e "${RED}ERROR${NC}! Failed to remove ${YELL}$package${NC}. Please check your internet connection or try again later."
+    fi
+}
+
+
 echo -e "${RED}WARNING!${NC} This program may install some heavy-weight features and apps on your system. Do you want to proceed? [${GREEN}y${NC}/${RED}n${NC}]:"
 read -p "Your answer: " choice
 
@@ -63,13 +75,21 @@ case $choice in
         install_package "duf"
         install_package "ripgrep"
         install_package "tldr"
-        #curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        echo | curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
+        spawn curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
+        expect "Install location [default: /usr/local/bin]"
+        send -- "\r"
+        excpect eof
         cargo install procs
 
+        # Setup rust
+        remove_package "rustc"
+        nohup curl https://sh.rustup.rs -sSf | sh -s -- -y
+        rustc --version | echo -e "${GREEN}${1}${NC}" 
+
+
         # Install Node.js and npm
-        echo -e "[ ${YELL} Warning{$NC}! ] Installing nodejs and npm statically in ${HOME}/static"
-        wget https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
+        echo -e "[ ${YELL} Warning${NC}! ] Installing nodejs and npm statically in ${HOME}/static"
+        wget -q https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
         mkdir $HOME/static
         tar -xvzf node-v20.11.1-linux-x64.tar.gz -C $HOME/static/ > /dev/null 2>&1
         echo "export PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
@@ -79,7 +99,6 @@ case $choice in
         # Install neovim
         wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
-        mkdir $HOME/static/
         mv ./nvim-linux64 $HOME/static/
         echo "export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
         export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin
@@ -110,7 +129,7 @@ case $choice in
         # Install starship and lvim
         echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"
         echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
-        npm install --quiet -g @fsouza/pretierrd
+        npm install --quiet -g @fsouza/prettierd
         npm install --quiet -g eslint_d
         npm install --quiet -g gtop
 
@@ -123,10 +142,15 @@ case $choice in
         sudo chmod -R 755 $HOME/.zsh
         
         # Install lvim
-        
         export PATH="${PATH}:/usr/local/bin/"
-        LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-        
+        spawn LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
+        for {set i 0} {$1 < 3} {incr i} {
+            expect "[y]es or [n]o (default: no)"
+            send -- 'y\r'
+        }
+        expect eof
+
+
         # Cleanup
         rm -f nvim-linux64.tar.gz
 
