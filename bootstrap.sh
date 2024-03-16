@@ -41,6 +41,8 @@ case $choice in
         echo -e "${GREEN}System updated!${NC}"
 
         # Install additional packages
+        install_package "wget"
+        install_package "curl"
         install_package "build-essential"
         install_package "tmux"
         install_package "unzip"
@@ -90,6 +92,7 @@ case $choice in
 
         
         # Install starship and lvim
+        echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"
         echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
         source "$HOME/.zshrc"
         npm install --quiet -g @fsouza/pretierrd
@@ -112,6 +115,8 @@ case $choice in
         ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf
         tmux source $HOME/.tmux.conf
         sudo chmod -R 755 /usr/local/share/zsh
+        sudo chmod -R 755 $HOME/.tmux/
+        sudo chmod -R 755 $HOME/.zsh
         echo -e "${GREEN}All done!${NC}"
         ;;
     'n')
