@@ -61,9 +61,9 @@ case $choice in
         install_package "duf"
         install_package "ripgrep"
         install_package "tldr"
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        #curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        echo | curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
         cargo install procs
-        curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
 
         # Install Node.js and npm
         install_package "nodejs"
@@ -77,7 +77,7 @@ case $choice in
         echo 'source $HOME/.profile' >> "$HOME/.bashrc"
         source "$HOME/.profile"
 
-        # Install skyshell
+        # Install skyshell 
 
         # Copy the dotfiles
         echo -e "${YELL}Setting up skyshell...${NC}"
