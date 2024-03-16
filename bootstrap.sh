@@ -73,13 +73,25 @@ case $choice in
         mkdir $HOME/static
         tar -xvzf node-v20.11.1-linux-x64.tar.gz -C $HOME/static/
         echo -e "PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
+        export PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin
         sudo rm node-v20.11.1-linux-x64.tar.gz
+
+        # Install neovim
+        wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
+        tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
+        mkdir $HOME/static/
+        mv ./nvim-linux64/bin/nvim $HOME/static/
+        echo -e "PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
+        export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin
+        sudo rm -rf ./nvim-linux64.tar.gz 
 
         # Resolve npm global problem
         mkdir -p "$HOME/.npm-global"
         npm config set prefix '~/.npm-global'
         echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.bashrc"
         echo 'export PATH="${PATH}:/$HOME/.npm-global/bin"' > "$HOME/.profile"
+        export NPM_CONFIG_PREFIX=$HOME/.npm-global
+        export PATH=${PATH}:/$HOME/.npm-global/bin
         echo 'source $HOME/.profile' >> "$HOME/.bashrc"
         source "$HOME/.profile"
 
@@ -111,12 +123,7 @@ case $choice in
         sudo chmod -R 755 $HOME/.zsh
         
         # Install lvim
-        wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
-        tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
-        mkdir $HOME/static/
-        mv ./nvim-linux64/bin/nvim $HOME/static/
-        echo -e "PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
-        sudo rm -rf ./nvim-linux64.tar.gz 
+        
         export PATH="${PATH}:/usr/local/bin/"
         LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
         
