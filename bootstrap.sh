@@ -68,8 +68,12 @@ case $choice in
         cargo install procs
 
         # Install Node.js and npm
-        install_package "nodejs"
-        install_package "npm"
+        echo -e "[ ${YELL} Warning{$NC}! ] Installing nodejs and npm statically in ${HOME}/static"
+        wget https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
+        mkdir $HOME/static
+        tar -xvzf node-v20.11.1-linux-x64.tar.gz -C $HOME/static/
+        echo -e "PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
+        sudo rm node-v20.11.1-linux-x64.tar.gz
 
         # Resolve npm global problem
         mkdir -p "$HOME/.npm-global"
@@ -107,10 +111,12 @@ case $choice in
         sudo chmod -R 755 $HOME/.zsh
         
         # Install lvim
-        wget -q https://github.com/neovim/neovim/releases/download/v0.9.1/nvim-linux64.tar.gz 
+        wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
-        sudo mv ./nvim-linux64/bin/nvim /usr/local/bin
-        sudo rm -rf ./nvim-linux64
+        mkdir $HOME/static/
+        mv ./nvim-linux64/bin/nvim $HOME/static/
+        echo -e "PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
+        sudo rm -rf ./nvim-linux64.tar.gz 
         export PATH="${PATH}:/usr/local/bin/"
         LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
         
