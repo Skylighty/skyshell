@@ -12,12 +12,12 @@ NC='\033[0m'
 # Function to install packages
 install_package() {
     package=$1
-    echo -e "${YELL}Installing $package${NC}..."
+    echo -e "Installing ${YELL}$package${NC}..."
     sudo apt-get install -y "$package" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}Installed $package${NC}!"
+        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}$package!${NC}"
     else
-        echo -e "${RED}Failed to install $package${NC}. Please check your internet connection or try again later."
+        echo -e "${RED}ERROR${NC}! Failed to install ${YELL}$package${NC}. Please check your internet connection or try again later."
     fi
 }
 
