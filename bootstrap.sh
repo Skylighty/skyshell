@@ -94,7 +94,6 @@ case $choice in
         # Install starship and lvim
         echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"
         echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
-        source "$HOME/.zshrc"
         npm install --quiet -g @fsouza/pretierrd
         npm install --quiet -g eslint_d
         npm install --quiet -g gtop
