@@ -88,6 +88,15 @@ case $choice in
         install_package "zsh"
         install_package "exa"
 
+        
+        # Install starship and lvim
+        echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
+        source "$HOME/.zshrc"
+        npm install --quiet -g @fsouza/pretierrd
+        npm install --quiet -g eslint_d
+        npm install --quiet -g gtop
+
+        
         # Install lvim
         wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
@@ -95,14 +104,7 @@ case $choice in
         sudo rm -rf ./nvim-linux64
         export PATH="${PATH}:/usr/local/bin/"
         LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-        echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
-        mkdir -p "$HOME/.config"
-        cp starship.toml "$HOME/.config/"
-        source "$HOME/.zshrc"
-        npm install --quiet -g @fsouza/pretierrd
-        npm install --quiet -g eslint_d
-        npm install --quiet -g gtop
-
+        
         # Cleanup
         rm -f nvim-linux64.tar.gz
 
