@@ -99,7 +99,7 @@ case $choice in
         npm install --quiet -g gtop
 
         # Set good things in the system
-        echo 'y' | sudo chsh $USER -s /bin/zsh
+        sudo chsh $USER -s /bin/zsh
         ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf
         tmux source $HOME/.tmux.conf
         sudo chmod -R 755 /usr/local/share/zsh
