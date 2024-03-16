@@ -98,9 +98,16 @@ case $choice in
         npm install --quiet -g eslint_d
         npm install --quiet -g gtop
 
+        # Set good things in the system
+        echo 'y' | sudo chsh $USER -s /bin/zsh
+        ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf
+        tmux source $HOME/.tmux.conf
+        sudo chmod -R 755 /usr/local/share/zsh
+        sudo chmod -R 755 $HOME/.tmux/
+        sudo chmod -R 755 $HOME/.zsh
         
         # Install lvim
-        wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
+        wget -q https://github.com/neovim/neovim/releases/download/v0.9.1/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
         sudo mv ./nvim-linux64/bin/nvim /usr/local/bin
         sudo rm -rf ./nvim-linux64
@@ -110,12 +117,6 @@ case $choice in
         # Cleanup
         rm -f nvim-linux64.tar.gz
 
-        echo 'y' | sudo chsh $USER -s /bin/zsh
-        ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf
-        tmux source $HOME/.tmux.conf
-        sudo chmod -R 755 /usr/local/share/zsh
-        sudo chmod -R 755 $HOME/.tmux/
-        sudo chmod -R 755 $HOME/.zsh
         echo -e "${GREEN}All done!${NC}"
         ;;
     'n')
