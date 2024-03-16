@@ -72,7 +72,7 @@ case $choice in
         wget https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
         mkdir $HOME/static
         tar -xvzf node-v20.11.1-linux-x64.tar.gz -C $HOME/static/
-        echo -e "PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
+        echo "export PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
         export PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin
         sudo rm node-v20.11.1-linux-x64.tar.gz
 
@@ -81,7 +81,7 @@ case $choice in
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
         mkdir $HOME/static/
         mv ./nvim-linux64 $HOME/static/
-        echo -e "PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
+        echo "export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
         export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin
         sudo rm -rf ./nvim-linux64.tar.gz 
 

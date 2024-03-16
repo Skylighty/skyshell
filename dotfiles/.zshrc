@@ -128,3 +128,5 @@ alias downloads='/mnt/c/Users/Pablo/Downloads'
 
 export NPM_CONFIG_PREFIX=$HOME/.npm-global
 export PATH="${PATH}:/$HOME/.npm-global/bin"
+export PATH="${PATH}:/$HOME/static/nvim-linux64/bin"
+export PATH="${PATH}:/$HOME/static/node-v20.11.1-linux-x64/bin"
