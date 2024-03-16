@@ -89,13 +89,24 @@ case $choice in
         install_package "duf"
         install_package "ripgrep"
         install_package "tldr"
-        curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
-        cargo install procs
-
-        # Setup rust
+        
+        # Setup Rust and Rust based packages
         remove_package "rustc"
         nohup curl https://sh.rustup.rs -sSf | sh -s -- -y
         export PATH="${PATH}:$HOME/.cargo/bin"
+        echo -e "Installing ${YELL}xh${NC} - the Rust based better 'curl'" 
+        curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
+        if [ $? -eq 0 ]; then
+        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}xh!${NC}"
+        else
+            echo -e "${RED}ERROR${NC}! Failed to install ${YELL}xh${NC}. Please check your internet connection or try again later."
+        fi
+        cargo install procs
+        if [ $? -eq 0 ]; then
+        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}procs!${NC}"
+        else
+            echo -e "${RED}ERROR${NC}! Failed to install ${YELL}procs${NC}. Please check your internet connection or try again later."
+        fi
 
 
         # Install Node.js and npm
