@@ -65,6 +65,8 @@ case $choice in
         # Install additional packages
         install_package "wget"
         install_package "curl"
+        install_package "vim"
+        install_package "git"
         install_package "build-essential"
         install_package "tmux"
         install_package "unzip"
@@ -77,8 +79,10 @@ case $choice in
         install_package "nmap"
         install_package "vnstat"
         install_package "hping3"
+        install_package "python3"
         install_package "python3-pip"
         install_package "python3-venv"
+        install_package "python3-dev"
         python3 -m pip install --user pygments > /dev/null 2>&1
         install_package "mlocate"
         install_package "cargo"
