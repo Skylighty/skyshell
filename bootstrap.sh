@@ -84,7 +84,6 @@ case $choice in
         # Setup rust
         remove_package "rustc"
         nohup curl https://sh.rustup.rs -sSf | sh -s -- -y
-        rustc --version | echo -e "${GREEN}${1}${NC}" 
 
 
         # Install Node.js and npm
