@@ -143,10 +143,12 @@ case $choice in
         # Install lvim
         export PATH="${PATH}:/usr/local/bin/"
         spawn LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-        for {set i 0} {$1 < 3} {incr i} {
-            expect "[y]es or [n]o (default: no)"
-            send -- 'y\r'
-        }
+        expect "[y]es or [n]o (default: no)"
+        send -- "y\r"
+        expect "[y]es or [n]o (default: no)"
+        send -- "y\r"
+        expect "[y]es or [n]o (default: no)"
+        send -- "y\r"
         expect eof
 
 
