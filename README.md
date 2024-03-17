@@ -44,6 +44,7 @@ Move between windows - Shift + arrows OR Alt + Shift+HL
 ```
 
 ## ⭐ Terminal presentation ⭐
+![screenshot](https://github.com/Skylighty/skyshell/blob/master/shell.png?raw=true)
 
 ## ⭐ Apps installed by bootstrap script ⭐
 APT
