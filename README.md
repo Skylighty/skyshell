@@ -34,14 +34,14 @@ Download FiraCode fonts here:
 - https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip
 
 ## ⭐ Key mappings for tmux ⭐
-```tmux
-Prefix - Ctrl + Space
-Split horizontally - Prefix -> "
-Split vertically - Prefix -> %
-Move between panes - Prefix -> arrows/hjkl OR Alt + arrows
-Resize panes - Prefix (hold) + arrows/hjkl
-Move between windows - Shift + arrows OR Alt + Shift+HL
-```
+
+* Prefix - Ctrl + Space  
+* Split horizontally - Prefix -> "  
+* Split vertically - Prefix -> %  
+* Move between panes - Prefix -> arrows/hjkl OR Alt + arrows  
+* Resize panes - Prefix (hold) + arrows/hjkl  
+* Move between windows - Shift + arrows OR Alt + Shift+HL  
+
 
 ## ⭐ Terminal presentation ⭐
 ![screenshot](https://github.com/Skylighty/skyshell/blob/master/shell.png?raw=true)
@@ -97,11 +97,11 @@ Cargo handles all of the Rust dependencies.
 ***LunarVim*** was chosen as lightweight, pretty and modable wrapper for nvim, to provide modern text editor which also can be treaten as IDE.
 
 ## ⭐ Install instruction for dummies ⭐ 
-```
-➡️ Clone from url: git clone https://github.com/Skylighty/skyshell.git
+
+➡️ Clone from url: git clone https://github.com/Skylighty/skyshell.git  
 ➡️ cd to skyshell  
-➡️ Execute : ./bootstrap.sh
+➡️ Execute : ./bootstrap.sh  
 ➡️ You will have to confirm in few places but it shouldn't be a problem at all.  
 ➡️ Reload Shell with su <user> and enjoy!  
-```
+
 **Enjoy 💋**
