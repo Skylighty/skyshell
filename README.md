@@ -43,6 +43,8 @@ Resize panes - Prefix (hold) + arrows/hjkl
 Move between windows - Shift + arrows OR Alt + Shift+HL
 ```
 
+## ⭐ Terminal presentation ⭐
+
 ## ⭐ Apps installed by bootstrap script ⭐
 APT
 * wget
