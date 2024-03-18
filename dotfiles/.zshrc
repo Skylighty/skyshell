@@ -115,7 +115,7 @@ export MODULAR_HOME="$HOME/.modular"
 export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
 alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
 
-if [ -f "/etc/wsl.conf " ]; then
+if [ -f "/etc/wsl.conf" ]; then
   if [ -z "$TMUX" ]; then
     exec tmux  
   fi
