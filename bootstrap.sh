@@ -88,7 +88,7 @@ case $choice in
         install_package "cargo"
         install_package "duf"
         install_package "ripgrep"
-        install_package "tldr"
+        npm_install_global "tldr"
         
         # Setup Rust and Rust based packages
         remove_package "rustc"
