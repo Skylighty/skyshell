@@ -79,6 +79,7 @@ case $choice in
         install_package "nmap"
         install_package "vnstat"
         install_package "hping3"
+        install_package "fzf"
         install_package "python3"
         install_package "python3-pip"
         install_package "python3-venv"

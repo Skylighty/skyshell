@@ -97,16 +97,12 @@ esac
 
 export STARSHIP_DISTRO="$ICON"
 
-# Plugins
-source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $HOME/.zsh/zsh-z/zsh-z.plugin.zsh
-source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $HOME/.zsh/zsh-abbr/zsh-abbr.plugin.zsh
 
 # Load Starship
 eval "$(starship init zsh)"
 export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/$HOME/static/nvim/bin"
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.zsh/fzf-zsh-plugin/bin/"
 alias vim="lvim"
 alias containers="sudo docker ps -a"
 #alias docker="sudo docker"
@@ -115,18 +111,44 @@ export MODULAR_HOME="$HOME/.modular"
 export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
 alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
 
-if [ -f "/etc/wsl.conf" ]; then
-  if [ -z "$TMUX" ]; then
-    exec tmux  
-  fi
+if [ -z "$TMUX" ]; then
+  exec tmux  
 fi
 
+
+# Plugins
+source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.zsh/zsh-z/zsh-z.plugin.zsh
+source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/.zsh/zsh-abbr/zsh-abbr.plugin.zsh
 autoload -U compinit; compinit
+source $HOME/.zsh/fzf-tab/fzf-tab.plugin.zsh
+source $HOME/.zsh/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh
+source $HOME/.zsh/fzf-zsh-plugin.plugin.zsh
+
+# History
+export HISTSIZE=500000
+export HISTFILE=$HOME/.zsh_history
+export SAVEHIST=$HISTSIZE
+export HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+# Completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 
 alias desktop='/mnt/c/Users/Pablo/Desktop'
 alias downloads='/mnt/c/Users/Pablo/Downloads'
 
 export NPM_CONFIG_PREFIX=$HOME/.npm-global
 export PATH="${PATH}:/$HOME/.npm-global/bin"
-export PATH="${PATH}:/$HOME/static/nvim-linux64/bin"
-export PATH="${PATH}:/$HOME/static/node-v20.11.1-linux-x64/bin"
+export PATH="${PATH}:/$HOME/go/go/bin"
+export MIBDIRS=/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf
