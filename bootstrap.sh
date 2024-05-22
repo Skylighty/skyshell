@@ -21,6 +21,17 @@ install_package() {
     fi
 }
 
+add_apt_repo() {
+  repo=$1
+  echo -e "Adding ${YELL}$repo${NC} repo to apt keyring!"
+  sudo add-apt-repository -y "$repo" > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    echo -e "[ ${GREEN}OK${NC} ] Added ${YELL}$repo${NC} repository to apt keyring!"
+  else
+    echo -e "[ ${RED}ERROR${NC} ] Failed to add $repo repository to apt keyring. :("
+  fi
+}
+
 remove_package() {
     package=$1
     echo -e "${RED}Purging ${YELL}$package${NC}..."
@@ -58,6 +69,7 @@ case $choice in
 
         # Upgrade system
         echo -e "${YELL}Updating system...${NC}"
+        add_apt_repo "ppa:zhangsongcui3371/fastfetch"
         sudo apt-get update -y > /dev/null
         sudo apt-get upgrade -y > /dev/null
         echo -e "${GREEN}System updated!${NC}"
@@ -72,6 +84,7 @@ case $choice in
         install_package "unzip"
         install_package "mc"
         install_package "neofetch"
+        install_package "fastfetch"
         install_package "net-tools"
         install_package "tree"
         install_package "iftop"
