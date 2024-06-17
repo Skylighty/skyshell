@@ -160,8 +160,7 @@ case $choice in
         # Install last packages
         install_package "fonts-firacode"
         install_package "zsh"
-        install_package "exa"
-
+        cargo install eza
         
         # Install starship and lvim
         echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"

@@ -46,9 +46,9 @@ function colormap() {
 }
 
 # ALIAS COMMANDS
-alias l="exa --icons --group-directories-first"
-alias ls="exa --icons --group-directories-first"
-alias ll="exa --icons --group-directories-first -la"
+alias l="eza --icons --group-directories-first"
+alias ls="eza --icons --group-directories-first"
+alias ll="eza --icons --group-directories-first -la"
 alias g="goto"
 alias cats="pygmentize -g -O style=monokai"
 alias ports="ss -tulnap"
