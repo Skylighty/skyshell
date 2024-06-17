@@ -115,6 +115,11 @@ case $choice in
         else
             echo -e "${RED}ERROR${NC}! Failed to install ${YELL}xh${NC}. Please check your internet connection or try again later."
         fi
+        cargo install sccache
+        export RUSTC_WRAPPER=sccache
+        export RUSTFLAGS="-C codegen-units=$(nproc)"
+        export CARGO_INCREMENTAL=1
+        export CARGO_HOME=$HOME/.cargo
         cargo install procs
         if [ $? -eq 0 ]; then
         echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}procs!${NC}"
@@ -132,7 +137,7 @@ case $choice in
         wget -q https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
         mkdir $HOME/static
         tar -xvzf node-v20.11.1-linux-x64.tar.gz -C $HOME/static/ > /dev/null 2>&1
-        echo "export PATH=$PATH:${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
+        echo 'export PATH=${PATH}:${HOME}/static/node-v20.11.1-linux-x64/bin' >> $HOME/.zshrc
         export PATH=${PATH}:${HOME}/static/node-v20.11.1-linux-x64/bin
         sudo rm node-v20.11.1-linux-x64.tar.gz
 
@@ -140,7 +145,7 @@ case $choice in
         wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
         tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
         mv ./nvim-linux64 $HOME/static/
-        echo "export PATH=$PATH:${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
+        echo 'export PATH=${PATH}:${HOME}/static/nvim-linux64/bin' >> $HOME/.zshrc
         export PATH=${PATH}:${HOME}/static/nvim-linux64/bin
         sudo rm -rf ./nvim-linux64.tar.gz 
 
@@ -150,7 +155,11 @@ case $choice in
         echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.bashrc" 
         echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.zshrc"
         echo 'export PATH="${PATH}:$HOME/.npm-global/bin"' >> "$HOME/.profile"
-        echo 'export PATH="${PATH}:$HOME/.npm-global/bin"' >> "$HOME/.zshrc"
+        echo 'export PATH="${PATH}:$HOME/.npm-global/bin"' >> "$HOME/.zshrc" 
+        echo "export RUSTC_WRAPPER=sccache" >> $HOME/.zshrc
+        echo 'export RUSTFLAGS="-C codegen-units=$(nproc)' >> $HOME/.zshrc
+        echo "export CARGO_INCREMENTAL=1" >> $HOME/.zshrc
+        echo "export CARGO_HOME=$HOME/.cargo" >> $HOME/.zshrc
         export NPM_CONFIG_PREFIX=$HOME/.npm-global
         export PATH=${PATH}:$HOME/.npm-global/bin
         echo 'source $HOME/.profile' >> "$HOME/.bashrc"
