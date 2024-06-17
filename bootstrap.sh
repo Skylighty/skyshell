@@ -118,10 +118,12 @@ case $choice in
             echo -e "${RED}ERROR${NC}! Failed to install ${YELL}xh${NC}. Please check your internet connection or try again later."
         fi
         cargo install sccache
-        export RUSTC_WRAPPER=sccache
+
         export RUSTFLAGS="-C codegen-units=$(nproc)"
         export CARGO_INCREMENTAL=1
         export CARGO_HOME=$HOME/.cargo
+        export RUSTC_WRAPPER=sccache
+
         cargo install procs
         if [ $? -eq 0 ]; then
         echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}procs!${NC}"
