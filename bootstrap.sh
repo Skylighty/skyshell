@@ -83,6 +83,8 @@ case $choice in
         install_package "tmux"
         install_package "unzip"
         install_package "mc"
+        install_package "pkg-config"
+        install_package "libssl-dev"
         install_package "neofetch"
         install_package "fastfetch"
         install_package "net-tools"
