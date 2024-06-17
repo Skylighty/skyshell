@@ -100,7 +100,7 @@ export STARSHIP_DISTRO="$ICON"
 
 # Load Starship
 eval "$(starship init zsh)"
-export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/$HOME/static/nvim/bin"
+export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$HOME/static/nvim/bin:$HOME/static/node/bin"
 export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
 export PATH="$PATH:$HOME/.zsh/fzf-zsh-plugin/bin/"
 alias vim="lvim"
@@ -124,7 +124,7 @@ source $HOME/.zsh/zsh-abbr/zsh-abbr.plugin.zsh
 autoload -U compinit; compinit
 source $HOME/.zsh/fzf-tab/fzf-tab.plugin.zsh
 source $HOME/.zsh/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh
-source $HOME/.zsh/fzf-zsh-plugin.plugin.zsh
+source $HOME/.zsh/fzf-zsh-plugin/fzf-zsh-plugin.plugin.zsh
 
 # History
 export HISTSIZE=500000
@@ -145,12 +145,9 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 
-alias desktop='/mnt/c/Users/Pablo/Desktop'
-alias downloads='/mnt/c/Users/Pablo/Downloads'
-
 export NPM_CONFIG_PREFIX=$HOME/.npm-global
-export PATH="${PATH}:/$HOME/.npm-global/bin"
-export PATH="${PATH}:/$HOME/go/go/bin"
+export PATH="${PATH}:$HOME/.npm-global/bin"
+export PATH="${PATH}:$HOME/go/go/bin"
 export MIBDIRS=/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf
 export EDITOR="lvim"
 export VISUAL="lvim"

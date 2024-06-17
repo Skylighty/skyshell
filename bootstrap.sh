@@ -123,6 +123,10 @@ case $choice in
         fi
 
 
+        # Copy the dotfiles
+        echo -e "${YELL}Setting up skyshell...${NC}"
+        cp -r ./dotfiles/. $HOME/
+
         # Install Node.js and npm
         echo -e "[ ${YELL} Warning${NC}! ] Installing nodejs and npm statically in ${HOME}/static"
         wget -q https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
@@ -143,18 +147,15 @@ case $choice in
         # Resolve npm global problem
         mkdir -p "$HOME/.npm-global"
         npm config set prefix '~/.npm-global'
-        echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.bashrc"
-        echo 'export PATH="${PATH}:/$HOME/.npm-global/bin"' > "$HOME/.profile"
+        echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.bashrc" 
+        echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.zshrc"
+        echo 'export PATH="${PATH}:/$HOME/.npm-global/bin"' >> "$HOME/.profile"
+        echo 'export PATH="${PATH}:/$HOME/.npm-global/bin"' >> "$HOME/.zshrc"
         export NPM_CONFIG_PREFIX=$HOME/.npm-global
         export PATH=${PATH}:/$HOME/.npm-global/bin
         echo 'source $HOME/.profile' >> "$HOME/.bashrc"
         source "$HOME/.profile"
 
-        # Install skyshell 
-
-        # Copy the dotfiles
-        echo -e "${YELL}Setting up skyshell...${NC}"
-        cp -r ./dotfiles/. $HOME/
         
         # Install last packages
         install_package "fonts-firacode"
