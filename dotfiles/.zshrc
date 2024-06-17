@@ -111,10 +111,6 @@ export MODULAR_HOME="$HOME/.modular"
 export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
 alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
 
-if [ -z "$TMUX" ]; then
-  exec tmux  
-fi
-
 
 # Plugins
 source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -151,3 +147,8 @@ export PATH="${PATH}:$HOME/go/go/bin"
 export MIBDIRS=/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf
 export EDITOR="lvim"
 export VISUAL="lvim"
+
+
+if [ -z "$TMUX" ]; then
+  exec tmux  
+fi
