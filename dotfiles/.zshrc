@@ -150,6 +150,8 @@ export EDITOR="lvim"
 export VISUAL="lvim"
 
 
-if [ -z "$TMUX" ]; then
-  exec tmux  
+# Check if inside a tmux session and not SSHing from an already running tmux session
+if [ -z "$TMUX" ] && [ -z "$SSH_TTY" ]; then
+  # Try to attach to an existing session named 'main' or create a new one if none exists
+  tmux attach-session -t main || tmux new-session -s main
 fi

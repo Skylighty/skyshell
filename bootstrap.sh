@@ -170,7 +170,7 @@ case $choice in
         echo 'export PATH="${PATH}:$HOME/.npm-global/bin"' >> "$HOME/.profile"
         echo 'export PATH="${PATH}:$HOME/.npm-global/bin"' >> "$HOME/.zshrc" 
         echo "export RUSTC_WRAPPER=sccache" >> $HOME/.zshrc
-        echo 'export RUSTFLAGS="-C codegen-units=$(nproc)' >> $HOME/.zshrc
+        echo 'export RUSTFLAGS="-C codegen-units=$(nproc)"' >> $HOME/.zshrc
         echo "export CARGO_INCREMENTAL=1" >> $HOME/.zshrc
         echo "export CARGO_HOME=$HOME/.cargo" >> $HOME/.zshrc
         export NPM_CONFIG_PREFIX=$HOME/.npm-global
