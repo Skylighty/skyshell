@@ -17,8 +17,19 @@ install_package() {
     if [ $? -eq 0 ]; then
         echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}$package!${NC}"
     else
-        echo -e "${RED}ERROR${NC}! Failed to install ${YELL}$package${NC}. Please check your internet connection or try again later."
+        echo -e "[ ${RED}ERROR${NC} ] ! Failed to install ${YELL}$package${NC}. Please check your internet connection or try again later."
     fi
+}
+
+install_dpkg() {
+  filename=$1
+  echo -e "Installing ${YELL}$filename${NC} with ${RED}dpkg${NC}..."
+  sudo dpkg -i "$filename" > /dev/null 2>&1
+  if [ $? -eq 0 ]; then 
+    echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}$package${NC} with ${RED}dpkg${NC}!"
+  else
+    echo -e "[ ${RED}ERROR${NC} ] ! Failed to install ${YELL}$package${NC}. Please check your internet connection or try again later."
+  fi
 }
 
 add_apt_repo() {
@@ -69,7 +80,6 @@ case $choice in
 
         # Upgrade system
         echo -e "${YELL}Updating system...${NC}"
-        add_apt_repo "ppa:zhangsongcui3371/fastfetch"
         sudo apt-get update -y > /dev/null
         sudo apt-get upgrade -y > /dev/null
         echo -e "${GREEN}System updated!${NC}"
@@ -104,7 +114,8 @@ case $choice in
         install_package "cargo"
         install_package "duf"
         install_package "ripgrep"
-        npm_install_global "tldr"
+        install_package "fd-find"
+
         
         # Setup Rust and Rust based packages
         remove_package "rustc"
@@ -116,19 +127,6 @@ case $choice in
         echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}xh!${NC}"
         else
             echo -e "${RED}ERROR${NC}! Failed to install ${YELL}xh${NC}. Please check your internet connection or try again later."
-        fi
-        cargo install sccache
-
-        export RUSTFLAGS="-C codegen-units=$(nproc)"
-        export CARGO_INCREMENTAL=1
-        export CARGO_HOME=$HOME/.cargo
-        export RUSTC_WRAPPER=sccache
-
-        cargo install procs
-        if [ $? -eq 0 ]; then
-        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}procs!${NC}"
-        else
-            echo -e "${RED}ERROR${NC}! Failed to install ${YELL}procs${NC}. Please check your internet connection or try again later."
         fi
 
 
@@ -153,6 +151,17 @@ case $choice in
         export PATH=${PATH}:${HOME}/static/nvim-linux64/bin
         sudo rm -rf ./nvim-linux64.tar.gz 
 
+        # Install fastfetch
+        wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.15.0/fastfetch-linux-amd64.deb
+        install_dpkg "fastfetch-linux-amd64.deb"
+        rm fastfetch-linux-amd64.deb
+
+        # Install eza
+        wget https://github.com/eza-community/eza/releases/download/v0.18.17/eza_x86_64-unknown-linux-gnu.tar.gz
+        tar -xvzf eza_x86_64-unknown-linux-gnu.tar.gz
+        mv eza $HOME/static/
+        rm exa_x86_64-unknown-linux-gnu.tar.gz
+
         # Resolve npm global problem
         mkdir -p "$HOME/.npm-global"
         npm config set prefix '~/.npm-global'
@@ -173,12 +182,12 @@ case $choice in
         # Install last packages
         install_package "fonts-firacode"
         install_package "zsh"
-        cargo install eza
         
         # Install starship and lvim
         echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"
         echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
-        npm_install_global "@fsouza/prettierd"
+        npm_install_global "@fsouza/prettierd" 
+        npm_install_global "tldr"
         npm_install_global "eslint_d"
         npm_install_global "gtop"
 

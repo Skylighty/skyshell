@@ -144,6 +144,7 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 export NPM_CONFIG_PREFIX=$HOME/.npm-global
 export PATH="${PATH}:$HOME/.npm-global/bin"
 export PATH="${PATH}:$HOME/go/go/bin"
+export PATH="${PATH}:$HOME/static"
 export MIBDIRS=/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf
 export EDITOR="lvim"
 export VISUAL="lvim"
