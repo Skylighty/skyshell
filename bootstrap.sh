@@ -160,7 +160,7 @@ case $choice in
         wget https://github.com/eza-community/eza/releases/download/v0.18.17/eza_x86_64-unknown-linux-gnu.tar.gz
         tar -xvzf eza_x86_64-unknown-linux-gnu.tar.gz
         mv eza $HOME/static/
-        rm exa_x86_64-unknown-linux-gnu.tar.gz
+        rm eza_x86_64-unknown-linux-gnu.tar.gz
 
         # Resolve npm global problem
         mkdir -p "$HOME/.npm-global"
