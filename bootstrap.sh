@@ -90,6 +90,7 @@ case $choice in
         install_package "vim"
         install_package "git"
         install_package "build-essential"
+        install_package "jq"
         install_package "tmux"
         install_package "unzip"
         install_package "mc"
