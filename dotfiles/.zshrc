@@ -148,7 +148,8 @@ export PATH="${PATH}:$HOME/static"
 export MIBDIRS=/usr/share/snmp/mibs:/usr/share/snmp/mibs/iana:/usr/share/snmp/mibs/ietf
 export EDITOR="lvim"
 export VISUAL="lvim"
-
+export TERM=screen-256color
+export WAYLAND_DISPLAY=wayland-0
 
 # Check if inside a tmux session and not SSHing from an already running tmux session
 if [ -z "$TMUX" ] && [ -z "$SSH_TTY" ]; then
