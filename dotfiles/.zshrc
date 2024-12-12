@@ -153,8 +153,6 @@ export VISUAL="lvim"
 export TERM=screen-256color
 export WAYLAND_DISPLAY=wayland-0
 
-# Check if inside a tmux session and not SSHing from an already running tmux session
-if [ -z "$TMUX" ] && [ -z "$SSH_TTY" ]; then
-  # Try to attach to an existing session named 'main' or create a new one if none exists
-  tmux attach-session -t main || tmux new-session -s main
+if [ -z "$TMUX" ]; then
+  exec tmux
 fi
