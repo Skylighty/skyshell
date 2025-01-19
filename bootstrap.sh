@@ -191,6 +191,8 @@ echo -e "${GREEN}Installing Starship prompt (optional)...${NC}"
 curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 cat <<'EOF' >$HOME/.config/starship.toml
+"$schema" = 'https://starship.rs/config-schema.json'
+
 # Insert a blank line between shell prompts
 add_newline = true
 
@@ -201,12 +203,15 @@ palette = "catppuccin_mocha"
 
 # Define the order and format of the information in our prompt
 format = """\
-[](fg:#3B76F0)\
+[](fg:bluish)\
+$os\
+$username\
+[▓▒░](fg:bluish bg:mauve)\
 $directory\
 ${custom.directory_separator_not_git}\
 ${custom.directory_separator_git}\
-$symbol($git_branch[](fg:#FCF392))\
-$symbol( $git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
+$symbol($git_branch[](fg:pinkish))\
+$symbol($git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
 ${custom.git_config_email}
 $character"""
 
@@ -218,16 +223,50 @@ symbol = " "
 [line_break]
 disabled = true
 
+[username]
+show_always = true
+style_user = "bg:bluish fg:black"
+style_root = "bg:bluish fg:black"
+format = '[ $user]($style)'
+
+[os]
+disabled=false
+style= "fg:black bg:bluish"
+format= "[$symbol]($style)"
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇"
+Artix = "󰣇"
+EndeavourOS = ""
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+Pop = ""
+
 # Customize the format of the working directory
 [directory]
 truncate_to_repo = true
 format = "[  $path ]($style)"
-style = "fg:text bg:#3B76F0"
+style = "fg:black bg:mauve"
 
 [git_branch]
 symbol = " "
-format = "[ $symbol$branch(:$remote_branch) ]($style)"
-style = "fg:#1C3A5E bg:#FCF392"
+format = "[$symbol$branch(:$remote_branch) ]($style)"
+style = "fg:#1C3A5E bg:pinkish"
 
 [git_metrics]
 disabled = false
@@ -271,7 +310,7 @@ style = "text"
 [custom.directory_separator_git]
 description = "Output a styled separator right after the directory when inside a git repository."
 command = ""
-format = "[](fg:#3B76F0 bg:#FCF392)"
+format = "[▓▒░](fg:mauve bg:pinkish)"
 # Only when inside git repository
 when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
 
@@ -279,15 +318,22 @@ when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
 [custom.directory_separator_not_git]
 description = "Output a styled separator right after the directory when NOT inside a git repository."
 command = ""
-format = "[](fg:#3B76F0)"
+format = "[](fg:mauve)"
 # Only when NOT inside a git repository
 when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
+
+[character]
+success_symbol = "[❱](blueish)[❱](mauve)[❱](pinkish)"
+error_symbol = "[❱❱](red)"
+vicmd_symbol = "[❰](cyan)"
 
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"
 pink = "#f5c2e7"
+bluish="#bda6f7"
 mauve = "#cba6f7"
+pinkish = "#e9a6f7"
 red = "#f38ba8"
 maroon = "#eba0ac"
 peach = "#fab387"
