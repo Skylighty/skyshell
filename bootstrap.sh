@@ -221,7 +221,7 @@ disabled = true
 # Customize the format of the working directory
 [directory]
 truncate_to_repo = true
-format = "[ $path ]($style)"
+format = "[  $path ]($style)"
 style = "fg:text bg:#3B76F0"
 
 [git_branch]
