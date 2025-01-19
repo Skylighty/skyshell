@@ -1,199 +1,380 @@
 #!/bin/bash
 
-#COLOR CODES
-RED='\033[0;31m'
+# Colors for output
 GREEN='\033[0;32m'
-YELL='\033[0;33m'
-CYAN='\033[0;36m'
-PURP='\033[0;35m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
 NC='\033[0m'
-#END OF COLOR CODES
 
-# Function to install packages
+# Function to install packages with colorful indicators
 install_package() {
-    package=$1
-    echo -e "Installing ${YELL}$package${NC}..."
-    sudo apt-get install -y "$package" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}$package!${NC}"
-    else
-        echo -e "${RED}ERROR${NC}! Failed to install ${YELL}$package${NC}. Please check your internet connection or try again later."
-    fi
-}
+  # Check if the package name is provided
+  if [[ -z "$1" ]]; then
+    echo -e "${RED}Error: No package name provided.${RESET}"
+    return 1
+  fi
 
-add_apt_repo() {
-  repo=$1
-  echo -e "Adding ${YELL}$repo${NC} repo to apt keyring!"
-  sudo add-apt-repository -y "$repo" > /dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    echo -e "[ ${GREEN}OK${NC} ] Added ${YELL}$repo${NC} repository to apt keyring!"
+  local package=$1
+
+  echo -e "${YELLOW}Installing package: ${package}${RESET}"
+
+  # Update package list (optional, can be removed if unnecessary)
+  sudo apt update -qq || {
+    echo -e "${RED}Failed to update package list.${RESET}"
+    return 1
+  }
+
+  # Install the package
+  if sudo apt install -y -qq "$package"; then
+    echo -e "${GREEN}Successfully installed ${package}.${RESET}"
+    return 0
   else
-    echo -e "[ ${RED}ERROR${NC} ] Failed to add $repo repository to apt keyring. :("
+    echo -e "${RED}Failed to install ${package}.${RESET}"
+    return 1
   fi
 }
 
-remove_package() {
-    package=$1
-    echo -e "${RED}Purging ${YELL}$package${NC}..."
-    sudo apt-get purge --auto-remove -y "$package" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        echo -e "[ ${GREEN}OK${NC} ] Removed ${YELL}$package${NC} and all it's dependencies!"
-    else
-        echo -e "${RED}ERROR${NC}! Failed to remove ${YELL}$package${NC}. Please check your internet connection or try again later."
-    fi
+echo -e "${GREEN}Starting setup...${NC}"
+read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}email: ${NC}")" GIT_MAIL
+read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}username: ${NC}")" GIT_USERNAME
+
+sudo cat <<'EOF' >/etc/apt/apt.conf.d/99parallel
+APT::Acquire::Retries "3";
+APT::Acquire::Queue-Mode "access";
+Acquire::Languages "none";
+APT::Install-Recommends "false";
+APT::Get::AllowUnauthenticated "true";
+APT::Get::Assume-Yes "true";
+
+APT::Get::Only-Source "false" ;
+EOF
+
+# Update and upgrade system
+sudo apt update -y && sudo apt upgrade -y
+
+# Install base packages
+echo -e "${GREEN}Installing base packages...${NC}"
+install_package git
+install_package ca-certificates
+install_package unzip
+install_package openssh-client
+install_package curl
+install_package wget
+install_package zsh
+install_package build-essential
+install_package fzf
+install_package bat
+install_package exa
+install_package eza
+install_package btop
+install_package fastfetch
+install_package ripgrep
+install_package tmux
+install_package sshpass
+install_package fontconfig
+
+# Set Zsh as the default shell
+echo -e "${GREEN}Setting Zsh as default shell...${NC}"
+chsh -s "$(which zsh)"
+
+curl -sSL git.io/antigen >$HOME/.antigen.zsh
+
+# Configure .zshrc
+echo -e "${GREEN}Configuring Zsh...${NC}"
+cat <<'EOF' >$HOME/.zshrc
+# Load Antigen
+source $HOME/.antigen.zsh
+
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+zstyle ':fzf-tab:*' switch-group '<' '>'
+zstyle ':completion:*:*:ssh:*' hosts ${(f)"$(awk '/^Host / {print $2}' ~/.ssh/config | grep -v '^\*$')"}
+
+# Plugins and themes using Antigen
+antigen use oh-my-zsh
+antigen bundle Aloxaf/fzf-tab
+antigen bundle git
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-history-substring-search
+
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# Apply Antigen configuration
+antigen apply
+
+# Load completions
+autoload -U compinit; compinit
+
+# Aliases
+alias l='exa --icons -F -H --group-directories-first --git -1'
+alias ls='exa --icons -F -H --group-directories-first --git -1'
+alias cat='batcat'
+alias grep='rg'
+alias ll='exa --icons -F -H --group-directories-first --git -1 -lah'
+alias vim='nvim'
+alias tmux='tmux -2'
+alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
+
+# Path updates
+export PATH="$HOME/bin:$PATH"
+
+# History
+export HISTSIZE=500000
+export HISTFILE=$HOME/.zsh_history
+export SAVEHIST=$HISTSIZE
+export HISTDUP=erase
+export FZF_PREVIEW_WINDOW='right:60%'
+setopt appendhistory
+setopt sharehistory
+setopt share_history
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+
+# FZF integration for history
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
+export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always {}' --preview-window=right:60%"
+export FZF_CTRL_R_OPTS="--sort --preview 'echo {}' --preview-window=down:3:wrap"
+
+# Enhanced History Search with FZF
+fzf-history-widget() {
+  # Remove line numbers from history
+  local result=$(fc -l 1 | sed 's/^[ ]*[0-9]*[ \t]*//' | fzf --tac --query="$LBUFFER" --preview 'echo {}' --preview-window=down:3:wrap)
+  if [[ -n $result ]]; then
+    BUFFER=$result
+    CURSOR=$#BUFFER
+  fi
+  zle redisplay
 }
 
-
-npm_install_global() {
-    if npm install -g --quiet "$@" > /dev/null 2>&1; then
-        echo -e "Installation of ${YELL}$@ ${GREEN}succeeded${NC}."
-    else
-        local exit_code=$?
-        echo -e "Installation of ${YELL}$@ ${RED}failed${NC} with exit code${RED} $exit_code${NC}."
-    fi
-}
+# Bind Ctrl+R to FZF-based History Search
+zle -N fzf-history-widget
+bindkey '^R' fzf-history-widget
 
 
-echo -e "${RED}WARNING!${NC} This program may install some heavy-weight features and apps on your system. Do you want to proceed? [${GREEN}y${NC}/${RED}n${NC}]:"
-read -p "Your answer: " choice
+# FZF keybindings
+[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
 
-case $choice in
-    'y')
-        # Install dependencies
-        echo -e "${YELL}Setting up dependencies...${NC}"
+export EDITOR="nvim"
+export VISUAL="nvim"
 
-        # Handle sudo and needrestart
-        echo -e "${YELL}Setting up sudo...${NC}"
-        sudo grep -qxF "${USER} ALL=(ALL) NOPASSWD: ALL" /etc/sudoers || echo "${USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers > /dev/null
-        sudo apt-get purge -y --auto-remove needrestart > /dev/null 2>&1
+eval "$(starship init zsh)"
+EOF
 
-        # Upgrade system
-        echo -e "${YELL}Updating system...${NC}"
-        add_apt_repo "ppa:zhangsongcui3371/fastfetch"
-        sudo apt-get update -y > /dev/null
-        sudo apt-get upgrade -y > /dev/null
-        echo -e "${GREEN}System updated!${NC}"
+sudo rm -r $HOME/.config/nvim >/dev/null
+sudo rm -r $HOME/opt/nvim* >/dev/null
+echo -e "${GREEN}Downloading nvim static build - latest${NC}."
+curl -sSLO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+echo -e "${GREEN}Unpacking nvim to${NC} /opt/nvim-linux64${GREEN}!${NC}"
+sudo tar -C /opt -xzf nvim-linux64.tar.gz
+rm nvim-linux64.tar.gz
+echo 'export PATH="${PATH}:/opt/nvim-linux64/bin"' >>$HOME/.zshrc
+mkdir -p $HOME/.config
+git clone --quiet https://github.com/LazyVim/starter $HOME/.config/nvim
 
-        # Install additional packages
-        install_package "wget"
-        install_package "curl"
-        install_package "vim"
-        install_package "git"
-        install_package "build-essential"
-        install_package "tmux"
-        install_package "unzip"
-        install_package "mc"
-        install_package "neofetch"
-        install_package "fastfetch"
-        install_package "net-tools"
-        install_package "tree"
-        install_package "iftop"
-        install_package "traceroute"
-        install_package "nmap"
-        install_package "vnstat"
-        install_package "hping3"
-        install_package "fzf"
-        install_package "python3"
-        install_package "python3-pip"
-        install_package "python3-venv"
-        install_package "python3-dev"
-        python3 -m pip install --user pygments > /dev/null 2>&1
-        install_package "mlocate"
-        install_package "cargo"
-        install_package "duf"
-        install_package "ripgrep"
-        npm_install_global "tldr"
-        
-        # Setup Rust and Rust based packages
-        remove_package "rustc"
-        nohup curl https://sh.rustup.rs -sSf | sh -s -- -y
-        export PATH="${PATH}:$HOME/.cargo/bin"
-        echo -e "Installing ${YELL}xh${NC} - the Rust based better 'curl'" 
-        curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
-        if [ $? -eq 0 ]; then
-        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}xh!${NC}"
-        else
-            echo -e "${RED}ERROR${NC}! Failed to install ${YELL}xh${NC}. Please check your internet connection or try again later."
-        fi
-        cargo install procs
-        if [ $? -eq 0 ]; then
-        echo -e "[ ${GREEN}OK${NC} ] Installed ${YELL}procs!${NC}"
-        else
-            echo -e "${RED}ERROR${NC}! Failed to install ${YELL}procs${NC}. Please check your internet connection or try again later."
-        fi
+# FZF keybindings
+echo -e "${GREEN}Installing FZF keybindings...${NC}"
+sudo /usr/share/doc/fzf/examples/key-bindings.zsh >~/.fzf.zsh
 
+# Install Starship prompt (optional)
+echo -e "${GREEN}Installing Starship prompt (optional)...${NC}"
+curl -sS https://starship.rs/install.sh | sh -s -- -y
 
-        # Install Node.js and npm
-        echo -e "[ ${YELL} Warning${NC}! ] Installing nodejs and npm statically in ${HOME}/static"
-        wget -q https://nodejs.org/dist/v20.11.1/node-v20.11.1-linux-x64.tar.gz
-        mkdir $HOME/static
-        tar -xvzf node-v20.11.1-linux-x64.tar.gz -C $HOME/static/ > /dev/null 2>&1
-        echo "export PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin" >> $HOME/.zshrc
-        export PATH=${PATH}:/${HOME}/static/node-v20.11.1-linux-x64/bin
-        sudo rm node-v20.11.1-linux-x64.tar.gz
+cat <<'EOF' >$HOME/.config/starship.toml
+# Insert a blank line between shell prompts
+add_newline = true
 
-        # Install neovim
-        wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz 
-        tar -xvzf nvim-linux64.tar.gz > /dev/null 2>&1
-        mv ./nvim-linux64 $HOME/static/
-        echo "export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin" >> $HOME/.zshrc
-        export PATH=${PATH}:/${HOME}/static/nvim-linux64/bin
-        sudo rm -rf ./nvim-linux64.tar.gz 
+# Increase the default command timeout to 2 seconds
+command_timeout = 2000
 
-        # Resolve npm global problem
-        mkdir -p "$HOME/.npm-global"
-        npm config set prefix '~/.npm-global'
-        echo 'export NPM_CONFIG_PREFIX=~/.npm-global' >> "$HOME/.bashrc"
-        echo 'export PATH="${PATH}:/$HOME/.npm-global/bin"' > "$HOME/.profile"
-        export NPM_CONFIG_PREFIX=$HOME/.npm-global
-        export PATH=${PATH}:/$HOME/.npm-global/bin
-        echo 'source $HOME/.profile' >> "$HOME/.bashrc"
-        source "$HOME/.profile"
+palette = "catppuccin_mocha"
 
-        # Install skyshell 
+# Define the order and format of the information in our prompt
+format = """\
+[](fg:#3B76F0)\
+$directory\
+${custom.directory_separator_not_git}\
+${custom.directory_separator_git}\
+$symbol($git_branch[](fg:#FCF392))\
+$symbol( $git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
+${custom.git_config_email}
+$character"""
 
-        # Copy the dotfiles
-        echo -e "${YELL}Setting up skyshell...${NC}"
-        cp -r ./dotfiles/. $HOME/
-        
-        # Install last packages
-        install_package "fonts-firacode"
-        install_package "zsh"
-        install_package "exa"
+# Fill character (empty space) between the left and right prompt
+[fill]
+symbol = " "
 
-        
-        # Install starship and lvim
-        echo -e "${YELL}Warning!${NC} insert 'yes' here to proceed"
-        echo "y" | curl -sS https://starship.rs/install.sh | sh > /dev/null
-        npm_install_global "@fsouza/prettierd"
-        npm_install_global "eslint_d"
-        npm_install_global "gtop"
+# Disable the line break between the first and second prompt lines
+[line_break]
+disabled = true
 
-        # Set good things in the system
-        sudo chsh $USER -s /bin/zsh
-        ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf
-        tmux source $HOME/.tmux.conf
-        sudo chmod -R 755 /usr/local/share/zsh
-        sudo chmod -R 755 $HOME/.tmux/
-        sudo chmod -R 755 $HOME/.zsh
-        
-        # Install lvim
-        export PATH="${PATH}:/usr/local/bin/"
-        LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
-        
+# Customize the format of the working directory
+[directory]
+truncate_to_repo = true
+format = "[ $path ]($style)"
+style = "fg:text bg:#3B76F0"
 
-        # Cleanup
-        rm -f nvim-linux64.tar.gz
+[git_branch]
+symbol = " "
+format = "[ $symbol$branch(:$remote_branch) ]($style)"
+style = "fg:#1C3A5E bg:#FCF392"
 
-        echo -e "${GREEN}All done!${NC}"
-        ;;
-    'n')
-        echo -e "${YELL}Exiting...${NC}"
-        exit 0
-        ;;
-    *)
-        echo -e "${RED}ERROR!${NC} Unrecognized input - please try again."
-        ;;
-esac
+[git_metrics]
+disabled = false
 
-exit 0
+[nodejs]
+format = "via [$symbol($version )]($style)"
+style = "yellow"
+
+[package]
+disabled = true # Enable to output the current working directory's package version
+format = "[$symbol$version]($style) "
+display_private = true
+
+# Output the command duration if over 2 seconds
+[cmd_duration]
+min_time = 2_000
+format = "[  $duration ]($style)"
+style = "white"
+
+# Customize the battery indicator
+[battery]
+format = "[$symbol $percentage]($style) "
+empty_symbol = "🪫"
+charging_symbol = "🔋"
+full_symbol = '🔋'
+
+[[battery.display]]
+threshold = 10
+style = 'red'
+
+# Output the current git config email address
+[custom.git_config_email]
+description = "Output the current git user's configured email address."
+command = "git config user.email"
+format = "\n[$symbol(  $output)]($style)"
+# Only when inside git repository
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+style = "text"
+
+# Output a styled separator right after the directory when inside a git repository.
+[custom.directory_separator_git]
+description = "Output a styled separator right after the directory when inside a git repository."
+command = ""
+format = "[](fg:#3B76F0 bg:#FCF392)"
+# Only when inside git repository
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+# Output a styled separator right after the directory when NOT inside a git repository.
+[custom.directory_separator_not_git]
+description = "Output a styled separator right after the directory when NOT inside a git repository."
+command = ""
+format = "[](fg:#3B76F0)"
+# Only when NOT inside a git repository
+when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
+EOF
+
+wget -q -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip &&
+  cd ~/.local/share/fonts &&
+  unzip JetBrainsMono.zip &&
+  rm JetBrainsMono.zip &&
+  fc-cache -fv >/dev/null
+
+mkdir -p $HOME/.config/tmux/plugins/catppuccin
+git clone --quiet -b v2.1.0 https://github.com/catppuccin/tmux.git $HOME/.config/tmux/plugins/catppuccin/tmux
+sudo rm -r $HOME/.config/tmux/plugins/catppuccin/tmux/.git
+git clone --quiet https://github.com/tmux-plugins/tmux-cpu $HOME/.config/tmux/plugins/tmux-cpu
+sudo rm -r $HOME/.config/tmux/plugins/tmux-cpu/.git
+git clone --quiet https://github.com/tmux-plugins/tmux-battery $HOME/.config/tmux/plugins/tmux-battery
+sudo rm -r $HOME/.config/tmux/plugins/tmux-battery/.git
+
+cat <<'EOF' >$HOME/.tmux.conf
+# ~/.tmux.conf
+
+# Options to make tmux more pleasant
+set -g mouse on
+set-option -g default-terminal "screen-256color"
+set-option -ga terminal-overrides ",xterm-256color:Tc"
+
+# Configure the catppuccin plugin
+set -g @catppuccin_flavor "mocha" # latte, frappe, macchiato, or mocha
+set -g @catppuccin_window_status_style "rounded" # basic, rounded, slanted, custom, or none
+
+# Load catppuccin
+run ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
+
+# Make the status line pretty and add some modules
+set -g status-right-length 100
+set -g status-left-length 100
+set -g status-left ""
+set -g status-right "#{E:@catppuccin_status_application}"
+set -agF status-right "#{E:@catppuccin_status_cpu}"
+set -ag status-right "#{E:@catppuccin_status_session}"
+set -ag status-right "#{E:@catppuccin_status_uptime}"
+set -agF status-right "#{E:@catppuccin_status_battery}"
+
+# Prefix fix
+set -g prefix C-space
+unbind C-b
+bind C-space send-prefix
+
+# Reload fix
+unbind r
+bind r source-file $HOME/.tmux.conf
+
+# Keybindings
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+bind-key '%' split-window -h
+bind-key '"' split-window -v
+
+bind -n S-Left previous-window
+bind -n S-Right next-window
+
+run $HOME/.config/tmux/plugins/tmux-cpu/cpu.tmux
+run $HOME/.config/tmux/plugins/tmux-battery/battery.tmux
+EOF
+
+git config --global user.email $GIT_MAIL
+git config --global user.name $GIT_USERNAME
