@@ -210,7 +210,7 @@ $username\
 $directory\
 ${custom.directory_separator_not_git}\
 ${custom.directory_separator_git}\
-$symbol($git_branch[](fg:pinkish))\
+$symbol($git_branch[ ](fg:pinkish))\
 $symbol($git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
 ${custom.git_config_email}
 $character"""
