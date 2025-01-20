@@ -206,6 +206,7 @@ format = """\
 [](fg:bluish)\
 $os\
 $username\
+$hostname\
 [▓▒░](fg:bluish bg:mauve)\
 $directory\
 ${custom.directory_separator_not_git}\
@@ -327,11 +328,16 @@ success_symbol = "[❱](bluish)[❱](mauve)[❱](pinkish)"
 error_symbol = "[❱❱](red)"
 vicmd_symbol = "[❰](cyan)"
 
+[hostname]
+ssh_only = true
+style = "bg:bluish fg:black"
+format = "[  $hostname]($style)"
+
 [palettes.catppuccin_mocha]
 rosewater = "#f5e0dc"
 flamingo = "#f2cdcd"
 pink = "#f5c2e7"
-bluish="#bda6f7"
+bluish="#b895f5"
 mauve = "#cba6f7"
 pinkish = "#e9a6f7"
 red = "#f38ba8"
