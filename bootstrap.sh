@@ -323,7 +323,7 @@ format = "[](fg:mauve)"
 when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
 
 [character]
-success_symbol = "[❱](blueish)[❱](mauve)[❱](pinkish)"
+success_symbol = "[❱](bluish)[❱](mauve)[❱](pinkish)"
 error_symbol = "[❱❱](red)"
 vicmd_symbol = "[❰](cyan)"
 
