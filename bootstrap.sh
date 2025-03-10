@@ -430,3 +430,4 @@ EOF
 
 git config --global user.email $GIT_MAIL
 git config --global user.name $GIT_USERNAME
+curl -fsSL https://get.docker.com -o get-docker.sh
