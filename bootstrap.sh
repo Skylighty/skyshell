@@ -385,6 +385,7 @@ cat <<'EOF' >$HOME/.tmux.conf
 set -g mouse on
 set-option -g default-terminal "screen-256color"
 set-option -ga terminal-overrides ",xterm-256color:Tc"
+set-option -g history-limit 50000
 
 # Configure the catppuccin plugin
 set -g @catppuccin_flavor "mocha" # latte, frappe, macchiato, or mocha
