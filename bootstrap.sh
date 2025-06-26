@@ -93,16 +93,17 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 zstyle ':fzf-tab:*' switch-group '<' '>'
-zstyle ':completion:*:*:ssh:*' hosts ${(f)"$(awk '/^Host / {print $2}' ~/.ssh/config | grep -v '^\*$')"}
 
 # Plugins and themes using Antigen
 antigen use oh-my-zsh
-antigen bundle Aloxaf/fzf-tab
 antigen bundle git
+antigen sunlei/zsh-ssh
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
+antigen bundle greymd/docker-zsh-completion
+antigen bundle Aloxaf/fzf-tab
 
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
@@ -169,6 +170,7 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 
 eval "$(starship init zsh)"
+export PATH="${PATH}:/opt/nvim-linux64/bin:${HOME}/go/bin:/snap/bin:/usr/local/bin"
 EOF
 
 sudo rm -r $HOME/.config/nvim >/dev/null
