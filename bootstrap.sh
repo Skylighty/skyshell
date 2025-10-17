@@ -97,7 +97,7 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 # Plugins and themes using Antigen
 antigen use oh-my-zsh
 antigen bundle git
-antigen sunlei/zsh-ssh
+antigen bundle sunlei/zsh-ssh
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-completions
