@@ -74,6 +74,10 @@ install_package tmux
 install_package sshpass
 install_package fontconfig
 
+# Install navi cheatsheet browser
+echo -e "${YELLOW} Installing navi cheatsheet as ${GREEN}tmux ${YELLOW}addon ${NC}"
+bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
+
 # Set Zsh as the default shell
 echo -e "${GREEN}Setting Zsh as default shell...${NC}"
 chsh -s "$(which zsh)"
@@ -425,6 +429,10 @@ bind -n M-Down select-pane -D
 
 bind-key '%' split-window -h
 bind-key '"' split-window -v
+bind-key -N "Open Navi (cheat sheets)" -T prefix C-g split-window \
+  "$SHELL --login -i -c 'navi --print | tmux load-buffer -b tmp - ; tmux paste-buffer -p -t {last} -b tmp -d'"
+
+
 
 bind -n S-Left previous-window
 bind -n S-Right next-window
