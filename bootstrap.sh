@@ -55,6 +55,7 @@ sudo apt update -y && sudo apt upgrade -y
 # Install base packages
 echo -e "${GREEN}Installing base packages...${NC}"
 install_package git
+install_package bsdmainutils
 install_package ca-certificates
 install_package unzip
 install_package openssh-client
