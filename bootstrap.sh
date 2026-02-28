@@ -6,39 +6,100 @@ RED='\033[0;31m'
 YELLOW='\033[0;33m'
 NC='\033[0m'
 
+# Detect distro family from /etc/os-release
+detect_distro() {
+  if [[ ! -f /etc/os-release ]]; then
+    echo -e "${RED}Cannot detect distro: /etc/os-release not found. Exiting.${NC}"
+    exit 1
+  fi
+  # shellcheck source=/dev/null
+  . /etc/os-release
+  local id="${ID:-}"
+  local id_like="${ID_LIKE:-}"
+  case "$id $id_like" in
+    *debian* | *ubuntu*)
+      DISTRO_FAMILY="debian"
+      ;;
+    *fedora* | *rhel* | *centos*)
+      DISTRO_FAMILY="fedora"
+      command -v dnf &>/dev/null && FEDORA_PM="dnf" || FEDORA_PM="yum"
+      ;;
+    *arch* | *manjaro*)
+      DISTRO_FAMILY="arch"
+      ;;
+    *suse*)
+      DISTRO_FAMILY="opensuse"
+      ;;
+    *)
+      echo -e "${RED}Unsupported distro: ${id}. Exiting.${NC}"
+      exit 1
+      ;;
+  esac
+  echo -e "${GREEN}Detected distro family: ${DISTRO_FAMILY}${NC}"
+}
+
 # Function to install packages with colorful indicators
 install_package() {
   # Check if the package name is provided
   if [[ -z "$1" ]]; then
-    echo -e "${RED}Error: No package name provided.${RESET}"
+    echo -e "${RED}Error: No package name provided.${NC}"
     return 1
   fi
 
   local package=$1
 
-  echo -e "${YELLOW}Installing package: ${package}${RESET}"
+  echo -e "${YELLOW}Installing package: ${package}${NC}"
 
-  # Update package list (optional, can be removed if unnecessary)
-  sudo apt update -qq || {
-    echo -e "${RED}Failed to update package list.${RESET}"
-    return 1
-  }
-
-  # Install the package
-  if sudo apt install -y -qq "$package"; then
-    echo -e "${GREEN}Successfully installed ${package}.${RESET}"
-    return 0
-  else
-    echo -e "${RED}Failed to install ${package}.${RESET}"
-    return 1
-  fi
+  case "$DISTRO_FAMILY" in
+    debian)
+      if sudo apt install -y -qq "$package"; then
+        echo -e "${GREEN}Successfully installed ${package}.${NC}"
+        return 0
+      else
+        echo -e "${RED}Failed to install ${package}.${NC}"
+        return 1
+      fi
+      ;;
+    fedora)
+      local pm="$FEDORA_PM"
+      if sudo "$pm" install -y "$package"; then
+        echo -e "${GREEN}Successfully installed ${package}.${NC}"
+        return 0
+      else
+        echo -e "${RED}Failed to install ${package}.${NC}"
+        return 1
+      fi
+      ;;
+    arch)
+      if sudo pacman -S --noconfirm --needed "$package"; then
+        echo -e "${GREEN}Successfully installed ${package}.${NC}"
+        return 0
+      else
+        echo -e "${RED}Failed to install ${package}.${NC}"
+        return 1
+      fi
+      ;;
+    opensuse)
+      if sudo zypper install -y "$package"; then
+        echo -e "${GREEN}Successfully installed ${package}.${NC}"
+        return 0
+      else
+        echo -e "${RED}Failed to install ${package}.${NC}"
+        return 1
+      fi
+      ;;
+  esac
 }
+
+detect_distro
 
 echo -e "${GREEN}Starting setup...${NC}"
 read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}email: ${NC}")" GIT_MAIL
 read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}username: ${NC}")" GIT_USERNAME
 
-sudo cat <<'EOF' >/etc/apt/apt.conf.d/99parallel
+# Write APT parallel config (Debian-based only)
+if [[ "$DISTRO_FAMILY" == "debian" ]]; then
+  sudo tee /etc/apt/apt.conf.d/99parallel > /dev/null <<'EOF'
 APT::Acquire::Retries "3";
 APT::Acquire::Queue-Mode "access";
 Acquire::Languages "none";
@@ -48,24 +109,38 @@ APT::Get::Assume-Yes "true";
 
 APT::Get::Only-Source "false" ;
 EOF
+fi
 
 # Update and upgrade system
-sudo apt update -y && sudo apt upgrade -y
+case "$DISTRO_FAMILY" in
+  debian)
+    sudo apt update -y && sudo apt upgrade -y
+    ;;
+  fedora)
+    if [[ "$FEDORA_PM" == "dnf" ]]; then
+      sudo dnf upgrade --refresh -y
+    else
+      sudo yum update -y
+    fi
+    ;;
+  arch)
+    sudo pacman -Syu --noconfirm
+    ;;
+  opensuse)
+    sudo zypper refresh && sudo zypper update -y
+    ;;
+esac
 
 # Install base packages
 echo -e "${GREEN}Installing base packages...${NC}"
 install_package git
-install_package bsdmainutils
 install_package ca-certificates
 install_package unzip
-install_package openssh-client
 install_package curl
 install_package wget
 install_package zsh
-install_package build-essential
 install_package fzf
 install_package bat
-install_package exa
 install_package eza
 install_package btop
 install_package fastfetch
@@ -73,6 +148,29 @@ install_package ripgrep
 install_package tmux
 install_package sshpass
 install_package fontconfig
+
+# Install distro-specific packages
+case "$DISTRO_FAMILY" in
+  debian)
+    install_package bsdmainutils
+    install_package openssh-client
+    install_package build-essential
+    ;;
+  fedora)
+    install_package openssh-clients
+    # groupinstall requires a separate command and cannot use install_package()
+    sudo "$FEDORA_PM" groupinstall -y "Development Tools"
+    ;;
+  arch)
+    install_package openssh
+    install_package base-devel
+    ;;
+  opensuse)
+    install_package openssh
+    install_package gcc
+    install_package make
+    ;;
+esac
 
 # Install navi cheatsheet browser
 echo -e "${YELLOW} Installing navi cheatsheet as ${GREEN}tmux ${YELLOW}addon ${NC}"
