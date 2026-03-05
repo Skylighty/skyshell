@@ -17,23 +17,23 @@ detect_distro() {
   local id="${ID:-}"
   local id_like="${ID_LIKE:-}"
   case "$id $id_like" in
-    *debian* | *ubuntu*)
-      DISTRO_FAMILY="debian"
-      ;;
-    *fedora* | *rhel* | *centos*)
-      DISTRO_FAMILY="fedora"
-      command -v dnf &>/dev/null && FEDORA_PM="dnf" || FEDORA_PM="yum"
-      ;;
-    *arch* | *manjaro*)
-      DISTRO_FAMILY="arch"
-      ;;
-    *suse*)
-      DISTRO_FAMILY="opensuse"
-      ;;
-    *)
-      echo -e "${RED}Unsupported distro: ${id}. Exiting.${NC}"
-      exit 1
-      ;;
+  *debian* | *ubuntu*)
+    DISTRO_FAMILY="debian"
+    ;;
+  *fedora* | *rhel* | *centos*)
+    DISTRO_FAMILY="fedora"
+    command -v dnf &>/dev/null && FEDORA_PM="dnf" || FEDORA_PM="yum"
+    ;;
+  *arch* | *manjaro*)
+    DISTRO_FAMILY="arch"
+    ;;
+  *suse*)
+    DISTRO_FAMILY="opensuse"
+    ;;
+  *)
+    echo -e "${RED}Unsupported distro: ${id}. Exiting.${NC}"
+    exit 1
+    ;;
   esac
   echo -e "${GREEN}Detected distro family: ${DISTRO_FAMILY}${NC}"
 }
@@ -51,43 +51,43 @@ install_package() {
   echo -e "${YELLOW}Installing package: ${package}${NC}"
 
   case "$DISTRO_FAMILY" in
-    debian)
-      if sudo apt install -y -qq "$package"; then
-        echo -e "${GREEN}Successfully installed ${package}.${NC}"
-        return 0
-      else
-        echo -e "${RED}Failed to install ${package}.${NC}"
-        return 1
-      fi
-      ;;
-    fedora)
-      local pm="$FEDORA_PM"
-      if sudo "$pm" install -y "$package"; then
-        echo -e "${GREEN}Successfully installed ${package}.${NC}"
-        return 0
-      else
-        echo -e "${RED}Failed to install ${package}.${NC}"
-        return 1
-      fi
-      ;;
-    arch)
-      if sudo pacman -S --noconfirm --needed "$package"; then
-        echo -e "${GREEN}Successfully installed ${package}.${NC}"
-        return 0
-      else
-        echo -e "${RED}Failed to install ${package}.${NC}"
-        return 1
-      fi
-      ;;
-    opensuse)
-      if sudo zypper install -y "$package"; then
-        echo -e "${GREEN}Successfully installed ${package}.${NC}"
-        return 0
-      else
-        echo -e "${RED}Failed to install ${package}.${NC}"
-        return 1
-      fi
-      ;;
+  debian)
+    if sudo apt install -y -qq "$package"; then
+      echo -e "${GREEN}Successfully installed ${package}.${NC}"
+      return 0
+    else
+      echo -e "${RED}Failed to install ${package}.${NC}"
+      return 1
+    fi
+    ;;
+  fedora)
+    local pm="$FEDORA_PM"
+    if sudo "$pm" install -y "$package"; then
+      echo -e "${GREEN}Successfully installed ${package}.${NC}"
+      return 0
+    else
+      echo -e "${RED}Failed to install ${package}.${NC}"
+      return 1
+    fi
+    ;;
+  arch)
+    if sudo pacman -S --noconfirm --needed "$package"; then
+      echo -e "${GREEN}Successfully installed ${package}.${NC}"
+      return 0
+    else
+      echo -e "${RED}Failed to install ${package}.${NC}"
+      return 1
+    fi
+    ;;
+  opensuse)
+    if sudo zypper install -y "$package"; then
+      echo -e "${GREEN}Successfully installed ${package}.${NC}"
+      return 0
+    else
+      echo -e "${RED}Failed to install ${package}.${NC}"
+      return 1
+    fi
+    ;;
   esac
 }
 
@@ -99,7 +99,7 @@ read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}username: ${NC}")" GIT
 
 # Write APT parallel config (Debian-based only)
 if [[ "$DISTRO_FAMILY" == "debian" ]]; then
-  sudo tee /etc/apt/apt.conf.d/99parallel > /dev/null <<'EOF'
+  sudo tee /etc/apt/apt.conf.d/99parallel >/dev/null <<'EOF'
 APT::Acquire::Retries "3";
 APT::Acquire::Queue-Mode "access";
 Acquire::Languages "none";
@@ -113,22 +113,22 @@ fi
 
 # Update and upgrade system
 case "$DISTRO_FAMILY" in
-  debian)
-    sudo apt update -y && sudo apt upgrade -y
-    ;;
-  fedora)
-    if [[ "$FEDORA_PM" == "dnf" ]]; then
-      sudo dnf upgrade --refresh -y
-    else
-      sudo yum update -y
-    fi
-    ;;
-  arch)
-    sudo pacman -Syu --noconfirm
-    ;;
-  opensuse)
-    sudo zypper refresh && sudo zypper update -y
-    ;;
+debian)
+  sudo apt update -y && sudo apt upgrade -y
+  ;;
+fedora)
+  if [[ "$FEDORA_PM" == "dnf" ]]; then
+    sudo dnf upgrade --refresh -y
+  else
+    sudo yum update -y
+  fi
+  ;;
+arch)
+  sudo pacman -Syu --noconfirm
+  ;;
+opensuse)
+  sudo zypper refresh && sudo zypper update -y
+  ;;
 esac
 
 # Install base packages
@@ -151,25 +151,25 @@ install_package fontconfig
 
 # Install distro-specific packages
 case "$DISTRO_FAMILY" in
-  debian)
-    install_package bsdmainutils
-    install_package openssh-client
-    install_package build-essential
-    ;;
-  fedora)
-    install_package openssh-clients
-    # groupinstall requires a separate command and cannot use install_package()
-    sudo "$FEDORA_PM" groupinstall -y "Development Tools"
-    ;;
-  arch)
-    install_package openssh
-    install_package base-devel
-    ;;
-  opensuse)
-    install_package openssh
-    install_package gcc
-    install_package make
-    ;;
+debian)
+  install_package bsdmainutils
+  install_package openssh-client
+  install_package build-essential
+  ;;
+fedora)
+  install_package openssh-clients
+  # groupinstall requires a separate command and cannot use install_package()
+  sudo "$FEDORA_PM" groupinstall -y "Development Tools"
+  ;;
+arch)
+  install_package openssh
+  install_package base-devel
+  ;;
+opensuse)
+  install_package openssh
+  install_package gcc
+  install_package make
+  ;;
 esac
 
 # Install navi cheatsheet browser
@@ -220,7 +220,7 @@ autoload -U compinit; compinit
 alias l='exa --icons -F -H --group-directories-first --git -1'
 alias ls='exa --icons -F -H --group-directories-first --git -1'
 alias cat='batcat'
-alias grep='rg'
+alias grep='rg -i'
 alias zgrep='rg -z'
 alias ll='exa --icons -F -H --group-directories-first --git -1 -lah'
 alias vim='nvim'
