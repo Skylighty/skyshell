@@ -1,0 +1,156 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 2000
+
+palette = "catppuccin_mocha"
+
+format = """\
+[](fg:bluish)\
+$os\
+$username\
+$hostname\
+[▓▒░](fg:bluish bg:mauve)\
+$directory\
+${custom.directory_separator_not_git}\
+${custom.directory_separator_git}\
+$symbol($git_branch[ ](fg:pinkish))\
+$symbol($git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
+${custom.git_config_email}
+$character"""
+
+[fill]
+symbol = " "
+
+[line_break]
+disabled = true
+
+[username]
+show_always = true
+style_user = "bg:bluish fg:black"
+style_root = "bg:bluish fg:black"
+format = '[ $user]($style)'
+
+[os]
+disabled = false
+style = "fg:black bg:bluish"
+format = "[$symbol]($style)"
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇"
+Artix = "󰣇"
+EndeavourOS = ""
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+Pop = ""
+
+[directory]
+truncate_to_repo = true
+format = "[  $path ]($style)"
+style = "fg:black bg:mauve"
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch) ]($style)"
+style = "fg:#1C3A5E bg:pinkish"
+
+[git_metrics]
+disabled = false
+
+[nodejs]
+format = "via [$symbol($version )]($style)"
+style = "yellow"
+
+[package]
+disabled = true
+format = "[$symbol$version]($style) "
+display_private = true
+
+[cmd_duration]
+min_time = 2_000
+format = "[  $duration ]($style)"
+style = "white"
+
+[battery]
+format = "[$symbol $percentage]($style) "
+empty_symbol = "🪫"
+charging_symbol = "🔋"
+full_symbol = '🔋'
+
+[[battery.display]]
+threshold = 10
+style = 'red'
+
+[custom.git_config_email]
+description = "Output the current git user's configured email address."
+command = "git config user.email"
+format = "\n[$symbol(  $output)]($style)"
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+style = "text"
+
+[custom.directory_separator_git]
+description = "Styled separator after directory when inside a git repo."
+command = ""
+format = "[▓▒░](fg:mauve bg:pinkish)"
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+[custom.directory_separator_not_git]
+description = "Styled separator after directory when not in a git repo."
+command = ""
+format = "[](fg:mauve)"
+when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
+
+[character]
+success_symbol = "[❱](bluish)[❱](mauve)[❱](pinkish)"
+error_symbol = "[❱❱](red)"
+vicmd_symbol = "[❰](cyan)"
+
+[hostname]
+ssh_only = true
+style = "bg:bluish fg:black"
+format = "[  $hostname]($style)"
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+bluish = "#b895f5"
+mauve = "#cba6f7"
+pinkish = "#e9a6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
