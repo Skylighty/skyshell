@@ -1,0 +1,12 @@
+FROM debian:stable
+RUN apt-get update && apt-get install -y git sudo ca-certificates && \
+    useradd -m -s /bin/bash tester && \
+    echo 'tester ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/tester
+USER tester
+WORKDIR /home/tester/skyshell
+COPY --chown=tester:tester . .
+ENV SKYSHELL_NONINTERACTIVE=1 \
+    SKYSHELL_GIT_EMAIL=ci@example.com \
+    SKYSHELL_GIT_NAME=ci \
+    SKYSHELL_SKIP_DOCKER=1
+CMD ["bash", "./bootstrap.sh", "--skip-upgrade"]

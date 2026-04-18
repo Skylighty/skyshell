@@ -1,544 +1,105 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# skyshell bootstrap — modular orchestrator
+set -euo pipefail
 
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[0;33m'
-NC='\033[0m'
+SKYSHELL_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export SKYSHELL_ROOT
 
-# Detect distro family from /etc/os-release
-detect_distro() {
-  if [[ ! -f /etc/os-release ]]; then
-    echo -e "${RED}Cannot detect distro: /etc/os-release not found. Exiting.${NC}"
-    exit 1
-  fi
+# shellcheck source=lib/common.sh
+source "$SKYSHELL_ROOT/lib/common.sh"
+# shellcheck source=lib/distro.sh
+source "$SKYSHELL_ROOT/lib/distro.sh"
+
+SKYSHELL_STAGES_ALL=(locale pkgs shell tools fonts tmux dotfiles)
+SKYSHELL_STAGES=("${SKYSHELL_STAGES_ALL[@]}")
+SKYSHELL_SKIP_UPGRADE=0
+
+usage() {
+  cat <<EOF
+skyshell — bootstrap a new shell environment
+
+Usage: bootstrap.sh [options]
+
+Options:
+  --only STAGES     Comma-separated list: ${SKYSHELL_STAGES_ALL[*]}
+  --skip-upgrade    Skip system package upgrade
+  --dry-run         Print commands instead of executing
+  --force-nvim      Reinstall nvim + LazyVim even if present
+  --skip-docker     Skip Docker + lazydocker install
+  -h, --help        Show this help
+
+Env (for non-interactive):
+  SKYSHELL_NONINTERACTIVE=1
+  SKYSHELL_GIT_EMAIL=...
+  SKYSHELL_GIT_NAME=...
+
+Supported distro families: debian, fedora, arch, opensuse
+EOF
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --only)          IFS=',' read -ra SKYSHELL_STAGES <<< "$2"; shift 2 ;;
+      --skip-upgrade)  SKYSHELL_SKIP_UPGRADE=1; shift ;;
+      --dry-run)       export SKYSHELL_DRY_RUN=1; shift ;;
+      --force-nvim)    export SKYSHELL_FORCE_NVIM=1; shift ;;
+      --skip-docker)   export SKYSHELL_SKIP_DOCKER=1; shift ;;
+      -h|--help)       usage; exit 0 ;;
+      *) die "Unknown option: $1 (see --help)" ;;
+    esac
+  done
+}
+
+wants_stage() {
+  local target="$1"
+  for s in "${SKYSHELL_STAGES[@]}"; do
+    [[ "$s" == "$target" ]] && return 0
+  done
+  return 1
+}
+
+load_stage() {
   # shellcheck source=/dev/null
-  . /etc/os-release
-  local id="${ID:-}"
-  local id_like="${ID_LIKE:-}"
-  case "$id $id_like" in
-  *debian* | *ubuntu*)
-    DISTRO_FAMILY="debian"
-    ;;
-  *fedora* | *rhel* | *centos*)
-    DISTRO_FAMILY="fedora"
-    command -v dnf &>/dev/null && FEDORA_PM="dnf" || FEDORA_PM="yum"
-    ;;
-  *arch* | *manjaro*)
-    DISTRO_FAMILY="arch"
-    ;;
-  *suse*)
-    DISTRO_FAMILY="opensuse"
-    ;;
-  *)
-    echo -e "${RED}Unsupported distro: ${id}. Exiting.${NC}"
-    exit 1
-    ;;
-  esac
-  echo -e "${GREEN}Detected distro family: ${DISTRO_FAMILY}${NC}"
+  source "$SKYSHELL_ROOT/scripts/$1.sh"
 }
 
-# Function to install packages with colorful indicators
-install_package() {
-  # Check if the package name is provided
-  if [[ -z "$1" ]]; then
-    echo -e "${RED}Error: No package name provided.${NC}"
-    return 1
+main() {
+  parse_args "$@"
+  : > "$SKYSHELL_LOG"
+  log "skyshell bootstrap starting"
+  log "Stages: ${SKYSHELL_STAGES[*]}"
+
+  detect_distro
+  detect_wsl
+
+  load_stage 10-pkgs
+  load_stage 20-shell
+  load_stage 30-tools
+  load_stage 40-fonts
+  load_stage 50-tmux
+  load_stage 60-dotfiles
+
+  if wants_stage locale; then
+    setup_locale
   fi
 
-  local package=$1
-
-  echo -e "${YELLOW}Installing package: ${package}${NC}"
-
-  case "$DISTRO_FAMILY" in
-  debian)
-    if sudo apt install -y -qq "$package"; then
-      echo -e "${GREEN}Successfully installed ${package}.${NC}"
-      return 0
-    else
-      echo -e "${RED}Failed to install ${package}.${NC}"
-      return 1
-    fi
-    ;;
-  fedora)
-    local pm="$FEDORA_PM"
-    if sudo "$pm" install -y "$package"; then
-      echo -e "${GREEN}Successfully installed ${package}.${NC}"
-      return 0
-    else
-      echo -e "${RED}Failed to install ${package}.${NC}"
-      return 1
-    fi
-    ;;
-  arch)
-    if sudo pacman -S --noconfirm --needed "$package"; then
-      echo -e "${GREEN}Successfully installed ${package}.${NC}"
-      return 0
-    else
-      echo -e "${RED}Failed to install ${package}.${NC}"
-      return 1
-    fi
-    ;;
-  opensuse)
-    if sudo zypper install -y "$package"; then
-      echo -e "${GREEN}Successfully installed ${package}.${NC}"
-      return 0
-    else
-      echo -e "${RED}Failed to install ${package}.${NC}"
-      return 1
-    fi
-    ;;
-  esac
-}
-
-detect_distro
-
-echo -e "${GREEN}Starting setup...${NC}"
-read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}email: ${NC}")" GIT_MAIL
-read -p "$(echo -e "${GREEN}Input your ${RED}git ${YELLOW}username: ${NC}")" GIT_USERNAME
-
-# Write APT parallel config (Debian-based only)
-if [[ "$DISTRO_FAMILY" == "debian" ]]; then
-  sudo tee /etc/apt/apt.conf.d/99parallel >/dev/null <<'EOF'
-APT::Acquire::Retries "3";
-APT::Acquire::Queue-Mode "access";
-Acquire::Languages "none";
-APT::Install-Recommends "false";
-APT::Get::AllowUnauthenticated "true";
-APT::Get::Assume-Yes "true";
-
-APT::Get::Only-Source "false" ;
-EOF
-fi
-
-# Update and upgrade system
-case "$DISTRO_FAMILY" in
-debian)
-  sudo apt update -y && sudo apt upgrade -y
-  ;;
-fedora)
-  if [[ "$FEDORA_PM" == "dnf" ]]; then
-    sudo dnf upgrade --refresh -y
+  if [[ "$SKYSHELL_SKIP_UPGRADE" == 0 ]]; then
+    upgrade_system
   else
-    sudo yum update -y
+    log "Skipping system upgrade (--skip-upgrade)"
   fi
-  ;;
-arch)
-  sudo pacman -Syu --noconfirm
-  ;;
-opensuse)
-  sudo zypper refresh && sudo zypper update -y
-  ;;
-esac
 
-# Install base packages
-echo -e "${GREEN}Installing base packages...${NC}"
-install_package git
-install_package ca-certificates
-install_package unzip
-install_package curl
-install_package wget
-install_package zsh
-install_package fzf
-install_package bat
-install_package eza
-install_package btop
-install_package fastfetch
-install_package ripgrep
-install_package tmux
-install_package sshpass
-install_package fontconfig
+  wants_stage pkgs     && stage_pkgs
+  wants_stage shell    && stage_shell
+  wants_stage tools    && stage_tools
+  wants_stage fonts    && stage_fonts
+  wants_stage tmux     && stage_tmux
+  wants_stage dotfiles && stage_dotfiles
 
-# Install distro-specific packages
-case "$DISTRO_FAMILY" in
-debian)
-  install_package bsdmainutils
-  install_package openssh-client
-  install_package build-essential
-  ;;
-fedora)
-  install_package openssh-clients
-  # groupinstall requires a separate command and cannot use install_package()
-  sudo "$FEDORA_PM" groupinstall -y "Development Tools"
-  ;;
-arch)
-  install_package openssh
-  install_package base-devel
-  ;;
-opensuse)
-  install_package openssh
-  install_package gcc
-  install_package make
-  ;;
-esac
-
-# Install navi cheatsheet browser
-echo -e "${YELLOW} Installing navi cheatsheet as ${GREEN}tmux ${YELLOW}addon ${NC}"
-bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
-
-# Set Zsh as the default shell
-echo -e "${GREEN}Setting Zsh as default shell...${NC}"
-chsh -s "$(which zsh)"
-
-curl -sSL git.io/antigen >$HOME/.antigen.zsh
-
-# Configure .zshrc
-echo -e "${GREEN}Configuring Zsh...${NC}"
-cat <<'EOF' >$HOME/.zshrc
-# Load Antigen
-source $HOME/.antigen.zsh
-
-zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-zstyle ':fzf-tab:*' switch-group '<' '>'
-
-# Plugins and themes using Antigen
-antigen use oh-my-zsh
-antigen bundle git
-antigen bundle sunlei/zsh-ssh
-antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle zsh-users/zsh-completions
-antigen bundle zsh-users/zsh-history-substring-search
-antigen bundle greymd/docker-zsh-completion
-antigen bundle Aloxaf/fzf-tab
-
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
-# Apply Antigen configuration
-antigen apply
-
-# Load completions
-autoload -U compinit; compinit
-
-# Aliases
-alias l='exa --icons -F -H --group-directories-first --git -1'
-alias ls='exa --icons -F -H --group-directories-first --git -1'
-alias cat='batcat'
-alias grep='rg -i'
-alias zgrep='rg -z'
-alias ll='exa --icons -F -H --group-directories-first --git -1 -lah'
-alias vim='nvim'
-alias tmux='tmux -2'
-alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
-
-# Path updates
-export PATH="$HOME/bin:$PATH"
-
-# History
-export HISTSIZE=500000
-export HISTFILE=$HOME/.zsh_history
-export SAVEHIST=$HISTSIZE
-export HISTDUP=erase
-export FZF_PREVIEW_WINDOW='right:60%'
-setopt appendhistory
-setopt sharehistory
-setopt share_history
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
-
-
-# FZF integration for history
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
-export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always {}' --preview-window=right:60%"
-export FZF_CTRL_R_OPTS="--sort --preview 'echo {}' --preview-window=down:3:wrap"
-
-# Enhanced History Search with FZF
-fzf-history-widget() {
-  # Remove line numbers from history
-  local result=$(fc -l 1 | sed 's/^[ ]*[0-9]*[ \t]*//' | fzf --tac --query="$LBUFFER" --preview 'echo {}' --preview-window=down:3:wrap)
-  if [[ -n $result ]]; then
-    BUFFER=$result
-    CURSOR=$#BUFFER
-  fi
-  zle redisplay
+  ok "skyshell bootstrap complete"
+  log "Log: $SKYSHELL_LOG"
+  log "Restart your terminal (or: exec zsh) to pick up changes."
 }
 
-# Bind Ctrl+R to FZF-based History Search
-zle -N fzf-history-widget
-bindkey '^R' fzf-history-widget
-
-
-# FZF keybindings
-[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
-
-export EDITOR="nvim"
-export VISUAL="nvim"
-
-eval "$(starship init zsh)"
-export PATH="${PATH}:/opt/nvim-linux64/bin:${HOME}/go/bin:/snap/bin:/usr/local/bin"
-EOF
-
-sudo rm -r $HOME/.config/nvim >/dev/null
-sudo rm -r $HOME/opt/nvim* >/dev/null
-echo -e "${GREEN}Downloading nvim static build - latest${NC}."
-curl -sSLO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-echo -e "${GREEN}Unpacking nvim to${NC} /opt/nvim-linux64${GREEN}!${NC}"
-sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-rm nvim-linux-x86_64.tar.gz
-echo 'export PATH="${PATH}:/opt/nvim-linux-x86_64/bin"' >>$HOME/.zshrc
-mkdir -p $HOME/.config
-git clone --quiet https://github.com/LazyVim/starter $HOME/.config/nvim
-
-# FZF keybindings
-echo -e "${GREEN}Installing FZF keybindings...${NC}"
-sudo /usr/share/doc/fzf/examples/key-bindings.zsh >~/.fzf.zsh
-
-# Install Starship prompt (optional)
-echo -e "${GREEN}Installing Starship prompt (optional)...${NC}"
-curl -sS https://starship.rs/install.sh | sh -s -- -y
-
-cat <<'EOF' >$HOME/.config/starship.toml
-"$schema" = 'https://starship.rs/config-schema.json'
-
-# Insert a blank line between shell prompts
-add_newline = true
-
-# Increase the default command timeout to 2 seconds
-command_timeout = 2000
-
-palette = "catppuccin_mocha"
-
-# Define the order and format of the information in our prompt
-format = """\
-[](fg:bluish)\
-$os\
-$username\
-$hostname\
-[▓▒░](fg:bluish bg:mauve)\
-$directory\
-${custom.directory_separator_not_git}\
-${custom.directory_separator_git}\
-$symbol($git_branch[ ](fg:pinkish))\
-$symbol($git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
-${custom.git_config_email}
-$character"""
-
-# Fill character (empty space) between the left and right prompt
-[fill]
-symbol = " "
-
-# Disable the line break between the first and second prompt lines
-[line_break]
-disabled = true
-
-[username]
-show_always = true
-style_user = "bg:bluish fg:black"
-style_root = "bg:bluish fg:black"
-format = '[ $user]($style)'
-
-[os]
-disabled=false
-style= "fg:black bg:bluish"
-format= "[$symbol]($style)"
-
-[os.symbols]
-Windows = "󰍲"
-Ubuntu = "󰕈"
-SUSE = ""
-Raspbian = "󰐿"
-Mint = "󰣭"
-Macos = "󰀵"
-Manjaro = ""
-Linux = "󰌽"
-Gentoo = "󰣨"
-Fedora = "󰣛"
-Alpine = ""
-Amazon = ""
-Android = ""
-Arch = "󰣇"
-Artix = "󰣇"
-EndeavourOS = ""
-CentOS = ""
-Debian = "󰣚"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
-Pop = ""
-
-# Customize the format of the working directory
-[directory]
-truncate_to_repo = true
-format = "[  $path ]($style)"
-style = "fg:black bg:mauve"
-
-[git_branch]
-symbol = " "
-format = "[$symbol$branch(:$remote_branch) ]($style)"
-style = "fg:#1C3A5E bg:pinkish"
-
-[git_metrics]
-disabled = false
-
-[nodejs]
-format = "via [$symbol($version )]($style)"
-style = "yellow"
-
-[package]
-disabled = true # Enable to output the current working directory's package version
-format = "[$symbol$version]($style) "
-display_private = true
-
-# Output the command duration if over 2 seconds
-[cmd_duration]
-min_time = 2_000
-format = "[  $duration ]($style)"
-style = "white"
-
-# Customize the battery indicator
-[battery]
-format = "[$symbol $percentage]($style) "
-empty_symbol = "🪫"
-charging_symbol = "🔋"
-full_symbol = '🔋'
-
-[[battery.display]]
-threshold = 10
-style = 'red'
-
-# Output the current git config email address
-[custom.git_config_email]
-description = "Output the current git user's configured email address."
-command = "git config user.email"
-format = "\n[$symbol(  $output)]($style)"
-# Only when inside git repository
-when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
-style = "text"
-
-# Output a styled separator right after the directory when inside a git repository.
-[custom.directory_separator_git]
-description = "Output a styled separator right after the directory when inside a git repository."
-command = ""
-format = "[▓▒░](fg:mauve bg:pinkish)"
-# Only when inside git repository
-when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
-
-# Output a styled separator right after the directory when NOT inside a git repository.
-[custom.directory_separator_not_git]
-description = "Output a styled separator right after the directory when NOT inside a git repository."
-command = ""
-format = "[](fg:mauve)"
-# Only when NOT inside a git repository
-when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
-
-[character]
-success_symbol = "[❱](bluish)[❱](mauve)[❱](pinkish)"
-error_symbol = "[❱❱](red)"
-vicmd_symbol = "[❰](cyan)"
-
-[hostname]
-ssh_only = true
-style = "bg:bluish fg:black"
-format = "[  $hostname]($style)"
-
-[palettes.catppuccin_mocha]
-rosewater = "#f5e0dc"
-flamingo = "#f2cdcd"
-pink = "#f5c2e7"
-bluish="#b895f5"
-mauve = "#cba6f7"
-pinkish = "#e9a6f7"
-red = "#f38ba8"
-maroon = "#eba0ac"
-peach = "#fab387"
-yellow = "#f9e2af"
-green = "#a6e3a1"
-teal = "#94e2d5"
-sky = "#89dceb"
-sapphire = "#74c7ec"
-blue = "#89b4fa"
-lavender = "#b4befe"
-text = "#cdd6f4"
-subtext1 = "#bac2de"
-subtext0 = "#a6adc8"
-overlay2 = "#9399b2"
-overlay1 = "#7f849c"
-overlay0 = "#6c7086"
-surface2 = "#585b70"
-surface1 = "#45475a"
-surface0 = "#313244"
-base = "#1e1e2e"
-mantle = "#181825"
-crust = "#11111b"
-EOF
-
-wget -q -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip &&
-  cd ~/.local/share/fonts &&
-  unzip JetBrainsMono.zip &&
-  rm JetBrainsMono.zip &&
-  fc-cache -fv >/dev/null
-
-mkdir -p $HOME/.config/tmux/plugins/catppuccin
-git clone --quiet -b v2.1.0 https://github.com/catppuccin/tmux.git $HOME/.config/tmux/plugins/catppuccin/tmux
-sudo rm -r $HOME/.config/tmux/plugins/catppuccin/tmux/.git
-git clone --quiet https://github.com/tmux-plugins/tmux-cpu $HOME/.config/tmux/plugins/tmux-cpu
-sudo rm -r $HOME/.config/tmux/plugins/tmux-cpu/.git
-git clone --quiet https://github.com/tmux-plugins/tmux-battery $HOME/.config/tmux/plugins/tmux-battery
-sudo rm -r $HOME/.config/tmux/plugins/tmux-battery/.git
-
-cat <<'EOF' >$HOME/.tmux.conf
-# ~/.tmux.conf
-
-# Options to make tmux more pleasant
-set -g mouse on
-set-option -g default-terminal "screen-256color"
-set-option -ga terminal-overrides ",xterm-256color:Tc"
-set-option -g history-limit 999999
-
-# Configure the catppuccin plugin
-set -g @catppuccin_flavor "mocha" # latte, frappe, macchiato, or mocha
-set -g @catppuccin_window_status_style "rounded" # basic, rounded, slanted, custom, or none
-
-# Load catppuccin
-run ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
-
-# Make the status line pretty and add some modules
-set -g status-right-length 100
-set -g status-left-length 100
-set -g status-left ""
-set -g status-right "#{E:@catppuccin_status_application}"
-set -agF status-right "#{E:@catppuccin_status_cpu}"
-set -ag status-right "#{E:@catppuccin_status_session}"
-set -ag status-right "#{E:@catppuccin_status_uptime}"
-set -agF status-right "#{E:@catppuccin_status_battery}"
-
-# Prefix fix
-set -g prefix C-space
-unbind C-b
-bind C-space send-prefix
-
-# Reload fix
-unbind r
-bind r source-file $HOME/.tmux.conf
-
-# Keybindings
-bind -n M-Left select-pane -L
-bind -n M-Right select-pane -R
-bind -n M-Up select-pane -U
-bind -n M-Down select-pane -D
-
-bind-key '%' split-window -h
-bind-key '"' split-window -v
-bind-key -N "Open Navi (cheat sheets)" -T prefix C-g split-window \
-  "$SHELL --login -i -c 'navi --print | tmux load-buffer -b tmp - ; tmux paste-buffer -p -t {last} -b tmp -d'"
-
-
-
-bind -n S-Left previous-window
-bind -n S-Right next-window
-
-run $HOME/.config/tmux/plugins/tmux-cpu/cpu.tmux
-run $HOME/.config/tmux/plugins/tmux-battery/battery.tmux
-EOF
-
-git config --global user.email $GIT_MAIL
-git config --global user.name $GIT_USERNAME
-curl -fsSL https://get.docker.com -o get-docker.sh
+main "$@"

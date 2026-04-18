@@ -1,0 +1,63 @@
+name: smoke-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - family: arch
+            image: archlinux:latest
+          - family: debian
+            image: debian:stable
+          - family: fedora
+            image: fedora:latest
+          - family: opensuse
+            image: opensuse/leap:15
+    container:
+      image: ${{ matrix.image }}
+      options: --user root
+    steps:
+      - name: Install prerequisites (${{ matrix.family }})
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ matrix.family }}" in
+            arch)
+              pacman -Sy --noconfirm git sudo
+              ;;
+            debian)
+              apt-get update -y && apt-get install -y git sudo ca-certificates
+              ;;
+            fedora)
+              dnf install -y git sudo
+              ;;
+            opensuse)
+              zypper --non-interactive install git sudo
+              ;;
+          esac
+
+      - uses: actions/checkout@v4
+
+      - name: Run bootstrap (non-interactive)
+        shell: bash
+        env:
+          SKYSHELL_NONINTERACTIVE: "1"
+          SKYSHELL_GIT_EMAIL: "ci@example.com"
+          SKYSHELL_GIT_NAME: "ci"
+        run: bash ./bootstrap.sh --skip-upgrade --only locale,pkgs,shell
+
+      - name: Verify locale generated
+        shell: bash
+        run: |
+          locale -a | grep -qi "en_US.utf8" || { echo "locale missing"; locale -a; exit 1; }
+
+      - name: Verify zsh installed
+        shell: bash
+        run: command -v zsh
