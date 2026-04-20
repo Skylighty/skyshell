@@ -15,11 +15,14 @@ Detected via `/etc/os-release`.
 
 ## Quick start
 
+Clone into `$XDG_DATA_HOME` so the repo doesn't clutter `$HOME`:
+
 ```bash
-git clone https://github.com/Skylighty/skyshell.git
-cd skyshell
-./bootstrap.sh
+git clone https://github.com/Skylighty/skyshell.git "${XDG_DATA_HOME:-$HOME/.local/share}/skyshell"
+"${XDG_DATA_HOME:-$HOME/.local/share}/skyshell/bootstrap.sh"
 ```
+
+Bootstrap self-locates via `$(dirname "$0")`, so any path works — `~/.skyshell`, `~/src/skyshell`, etc.
 
 Non-interactive (CI, automation):
 
@@ -28,6 +31,12 @@ SKYSHELL_NONINTERACTIVE=1 \
 SKYSHELL_GIT_EMAIL=you@example.com \
 SKYSHELL_GIT_NAME=you \
 ./bootstrap.sh --skip-upgrade
+```
+
+To re-run later:
+
+```bash
+"${XDG_DATA_HOME:-$HOME/.local/share}/skyshell/bootstrap.sh" --only dotfiles
 ```
 
 ## Options
