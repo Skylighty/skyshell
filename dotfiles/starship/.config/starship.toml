@@ -6,7 +6,7 @@ command_timeout = 2000
 palette = "catppuccin_mocha"
 
 format = """\
-[](fg:bluish)\
+[](fg:bluish)\
 $os\
 $username\
 $hostname\
@@ -112,7 +112,7 @@ when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
 [custom.directory_separator_not_git]
 description = "Styled separator after directory when not in a git repo."
 command = ""
-format = "[](fg:mauve)"
+format = "[](fg:mauve)"
 when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
 
 [character]
