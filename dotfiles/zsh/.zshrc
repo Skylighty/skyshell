@@ -97,3 +97,5 @@ command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 # ---- Local user additions ----
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+alias claude-mem='/home/pablo/.bun/bin/bun "/home/pablo/.copilot/installed-plugins/thedotmack/claude-mem/scripts/worker-service.cjs"'

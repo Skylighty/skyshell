@@ -14,8 +14,9 @@ $hostname\
 $directory\
 ${custom.directory_separator_not_git}\
 ${custom.directory_separator_git}\
-$symbol($git_branch[ ](fg:pinkish))\
-$symbol($git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
+$git_branch\
+${custom.git_close_separator}\
+$git_commit$git_status$git_metrics$git_state$fill$cmd_duration$nodejs$all\
 ${custom.git_config_email}
 $character"""
 
@@ -107,6 +108,12 @@ style = "text"
 description = "Styled separator after directory when inside a git repo."
 command = ""
 format = "[▓▒░](fg:mauve bg:pinkish)"
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+[custom.git_close_separator]
+description = "Closing powerline cap for the git section. Fires whenever directory_separator_git fired, even if git_branch is empty (detached HEAD), so the prompt never ends mid-color."
+command = ""
+format = "[](fg:pinkish)"
 when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
 
 [custom.directory_separator_not_git]
