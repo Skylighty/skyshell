@@ -40,9 +40,10 @@ stage_dotfiles() {
   ensure_stow
   # Pre-create shared directories so stow can't tree-fold them into a single
   # symlink and clobber sibling apps' configs.
-  run mkdir -p "$HOME/.config"
+  run mkdir -p "$HOME/.config" "$HOME/.config/nvim/lua/config"
   stow_pkg zsh
   stow_pkg tmux
   stow_pkg starship
+  stow_pkg nvim
   write_git_identity
 }

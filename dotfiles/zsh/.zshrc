@@ -54,6 +54,20 @@ alias vim='nvim'
 alias tmux='tmux -2'
 alias ssh="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
 
+# ---- Clipboard (OSC 52) ----
+# Copy to the local machine's clipboard through the terminal itself:
+# `cat file | clip` or `clip some text`. Works locally, inside tmux
+# (needs set-clipboard on) and over SSH.
+clip() {
+  local data
+  if (( $# )); then
+    data="$*"
+  else
+    data="$(cat)"
+  fi
+  printf '\e]52;c;%s\a' "$(printf '%s' "$data" | base64 | tr -d '\n')" > /dev/tty
+}
+
 # ---- FZF ----
 export FZF_PREVIEW_WINDOW='right:60%'
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
@@ -100,3 +114,5 @@ command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 alias claude-mem='/home/pablo/.bun/bin/bun "/home/pablo/.copilot/installed-plugins/thedotmack/claude-mem/scripts/worker-service.cjs"'
 set -o emacs
+export VAULT_ADDR=https://vault.int.hawetelekom.pl:8200
+export BROWSER=$HOME/bin/winbrowser
